@@ -167,6 +167,9 @@ def scrape_email(website, session):
             break  # first page that yields anything wins
         time.sleep(0.2)
     for email in found:
+        email = email.strip().strip("\\").rstrip(".,;:)('\"<>")
+        if not EMAIL_RE.fullmatch(email):
+            continue
         low = email.lower()
         if any(bad in low for bad in EMAIL_BLOCKLIST):
             continue
@@ -217,6 +220,19 @@ def main():
     api_session = requests.Session()
     seen = {}  # place_id -> record
 
+    # Resume support: load any existing output and skip duplicates by
+    # (name, address). Previously-collected rows are preserved and merged.
+    existing = []
+    existing_keys = set()
+    if os.path.exists(args.out):
+        with open(args.out, newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                existing.append(row)
+                existing_keys.add((row.get("name", "").strip().lower(),
+                                   row.get("address", "").strip().lower()))
+        print(f"Resuming: {len(existing)} rows already in {args.out}; "
+              f"new unique restaurants will be appended.")
+
     print("== Phase 1: discovering restaurants via Places API ==")
     for city in CITIES:
         if len(seen) >= args.target:
@@ -233,6 +249,9 @@ def main():
                 if not pid or pid in seen:
                     continue
                 addr = place.get("formattedAddress", "")
+                name = (place.get("displayName") or {}).get("text", "")
+                if (name.strip().lower(), addr.strip().lower()) in existing_keys:
+                    continue  # already collected in a previous run
                 city_p, state_p = parse_city_state(addr)
                 seen[pid] = {
                     "name": (place.get("displayName") or {}).get("text", ""),
@@ -281,13 +300,15 @@ def main():
     fields = ["name", "address", "city", "state", "phone", "website",
               "email", "price_level", "rating", "signature_dish",
               "unique_qualities", "source"]
+    all_rows = existing + records
     with open(args.out, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
-        for r in records:
-            w.writerow(r)
+        for r in all_rows:
+            w.writerow({k: r.get(k, "") for k in fields})
 
-    print(f"\nWrote {len(records)} rows to {args.out}")
+    print(f"\nWrote {len(all_rows)} rows to {args.out} "
+          f"({len(existing)} kept from prior run, {len(records)} new)")
 
 
 if __name__ == "__main__":
