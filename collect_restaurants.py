@@ -21,6 +21,7 @@ Usage:
 """
 
 import argparse
+import collections
 import csv
 import os
 import re
@@ -71,14 +72,18 @@ CITIES = [
     "Greenwich, CT", "Princeton, NJ", "Bellevue, WA", "Boulder, CO",
 ]
 
-# Query variants per city to broaden coverage.
+# Query variants per city to broaden coverage. Kept lean because the
+# project's daily API quota is small: fewer queries per city => more
+# cities covered per quota-day. These three yield the most unique places.
 QUERIES = [
     "fine dining restaurant in {city}",
-    "upscale restaurant in {city}",
-    "Michelin star restaurant in {city}",
-    "tasting menu restaurant in {city}",
     "high-end steakhouse in {city}",
+    "upscale restaurant in {city}",
 ]
+
+# A CITIES entry is treated as "already covered" (and skipped, to conserve
+# quota) once the existing output holds at least this many rows for it.
+COVERED_THRESHOLD = 15
 
 STATE_RE = re.compile(r",\s*([A-Z]{2})\s*\d{5}")
 CITY_RE = re.compile(r"([^,]+),\s*[A-Z]{2}\s*\d{5}")
@@ -233,10 +238,25 @@ def main():
         print(f"Resuming: {len(existing)} rows already in {args.out}; "
               f"new unique restaurants will be appended.")
 
+    # Cities already well-covered in prior runs: skip them so the limited
+    # daily quota is spent entirely on new metros rather than re-searching
+    # places we already have.
+    covered_counts = collections.Counter(
+        r.get("city", "").strip().lower() for r in existing)
+    covered_cities = {
+        city for city, n in covered_counts.items()
+        if n >= COVERED_THRESHOLD
+    }
+
     print("== Phase 1: discovering restaurants via Places API ==")
     for city in CITIES:
         if len(seen) >= args.target:
             break
+        city_name = city.split(",")[0].strip().lower()
+        if city_name in covered_cities:
+            print(f"  [skip] {city} already covered "
+                  f"({covered_counts[city_name]} rows)")
+            continue
         for q in QUERIES:
             if len(seen) >= args.target:
                 break
