@@ -172,7 +172,8 @@ def scrape_email(website, session):
             break  # first page that yields anything wins
         time.sleep(0.2)
     for email in found:
-        email = email.strip().strip("\\").rstrip(".,;:)('\"<>")
+        email = (email.replace("​", "").replace("﻿", "")
+                 .strip().strip("\\").rstrip(".,;:)('\"<>"))
         if not EMAIL_RE.fullmatch(email):
             continue
         low = email.lower()
