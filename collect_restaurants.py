@@ -52,7 +52,7 @@ FIELD_MASK = ",".join([
 UPSCALE_LEVELS = {"PRICE_LEVEL_EXPENSIVE", "PRICE_LEVEL_VERY_EXPENSIVE"}
 
 # US metros with meaningful fine-dining scenes.
-CITIES = [
+CITIES_US = [
     "New York, NY", "Brooklyn, NY", "Los Angeles, CA", "Beverly Hills, CA",
     "Santa Monica, CA", "San Francisco, CA", "Napa, CA", "Chicago, IL",
     "Boston, MA", "Washington, DC", "Miami, FL", "Miami Beach, FL",
@@ -72,21 +72,56 @@ CITIES = [
     "Greenwich, CT", "Princeton, NJ", "Bellevue, WA", "Boulder, CO",
 ]
 
-# Query variants per city to broaden coverage. Kept lean because the
-# project's daily API quota is small: fewer queries per city => more
-# cities covered per quota-day. These three yield the most unique places.
-QUERIES = [
+# Australian cities/regions with notable fine-dining and steakhouse scenes.
+CITIES_AU = [
+    "Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Canberra",
+    "Gold Coast", "Hobart", "Darwin", "Cairns", "Newcastle", "Wollongong",
+    "Geelong", "Sunshine Coast", "Byron Bay", "Noosa Heads",
+    "Port Douglas", "Fremantle", "Ballarat", "Bendigo", "Launceston",
+    "Townsville", "Margaret River", "Yarra Valley", "Mornington Peninsula",
+    "Barossa Valley", "Surfers Paradise", "Manly", "Parramatta", "Cronulla",
+]
+
+# Query variants per city. Kept lean because the daily API quota is small:
+# fewer queries per city => more cities covered per quota-day.
+QUERIES_US = [
     "fine dining restaurant in {city}",
     "high-end steakhouse in {city}",
     "upscale restaurant in {city}",
+]
+QUERIES_AU = [
+    "fine dining restaurant in {city}, Australia",
+    "steakhouse in {city}, Australia",
+    "upscale restaurant in {city}, Australia",
 ]
 
 # A CITIES entry is treated as "already covered" (and skipped, to conserve
 # quota) once the existing output holds at least this many rows for it.
 COVERED_THRESHOLD = 15
 
-STATE_RE = re.compile(r",\s*([A-Z]{2})\s*\d{5}")
-CITY_RE = re.compile(r"([^,]+),\s*[A-Z]{2}\s*\d{5}")
+# --- US address parsing: "... City, ST 12345, USA" ---
+US_STATE_RE = re.compile(r",\s*([A-Z]{2})\s*\d{5}")
+US_CITY_RE = re.compile(r"([^,]+),\s*[A-Z]{2}\s*\d{5}")
+
+# --- AU address parsing: "... City ST 1234, Australia" ---
+AU_STATE_RE = re.compile(r"\b(NSW|VIC|QLD|WA|SA|TAS|ACT|NT)\b\s*\d{4}")
+AU_CITY_RE = re.compile(
+    r",\s*([^,]+?)\s+(?:NSW|VIC|QLD|WA|SA|TAS|ACT|NT)\s*\d{4}")
+
+
+def parse_city_state_us(addr):
+    state = (US_STATE_RE.search(addr or "") or [None, ""])
+    state = state.group(1) if hasattr(state, "group") else ""
+    m = US_CITY_RE.search(addr or "")
+    return (m.group(1).strip() if m else ""), state
+
+
+def parse_city_state_au(addr):
+    addr = addr or ""
+    ms = AU_STATE_RE.search(addr)
+    state = ms.group(1) if ms else ""
+    mc = AU_CITY_RE.search(addr)
+    return (mc.group(1).strip() if mc else ""), state
 
 EMAIL_RE = re.compile(
     r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}"
@@ -134,16 +169,19 @@ def places_text_search(api_key, query, session):
         time.sleep(2)  # next-page token needs a moment to become valid
 
 
-def parse_city_state(formatted_address):
-    state = ""
-    city = ""
-    m = STATE_RE.search(formatted_address or "")
-    if m:
-        state = m.group(1)
-    m = CITY_RE.search(formatted_address or "")
-    if m:
-        city = m.group(1).strip()
-    return city, state
+# Region configuration: cities, query templates, and address parser.
+REGIONS = {
+    "us": {
+        "cities": CITIES_US,
+        "queries": QUERIES_US,
+        "parser": parse_city_state_us,
+    },
+    "au": {
+        "cities": CITIES_AU,
+        "queries": QUERIES_AU,
+        "parser": parse_city_state_au,
+    },
+}
 
 
 def scrape_email(website, session):
@@ -216,7 +254,14 @@ def main():
     ap.add_argument("--no-email", action="store_true",
                     help="skip website email scraping (faster)")
     ap.add_argument("--email-workers", type=int, default=12)
+    ap.add_argument("--region", choices=sorted(REGIONS), default="us",
+                    help="which country's city list/parsing to use")
     args = ap.parse_args()
+
+    region = REGIONS[args.region]
+    cities = region["cities"]
+    queries = region["queries"]
+    parse_city_state = region["parser"]
 
     api_key = os.environ.get("GOOGLE_PLACES_API_KEY")
     if not api_key:
@@ -249,8 +294,9 @@ def main():
         if n >= COVERED_THRESHOLD
     }
 
-    print("== Phase 1: discovering restaurants via Places API ==")
-    for city in CITIES:
+    print(f"== Phase 1: discovering restaurants via Places API "
+          f"(region={args.region}) ==")
+    for city in cities:
         if len(seen) >= args.target:
             break
         city_name = city.split(",")[0].strip().lower()
@@ -258,7 +304,7 @@ def main():
             print(f"  [skip] {city} already covered "
                   f"({covered_counts[city_name]} rows)")
             continue
-        for q in QUERIES:
+        for q in queries:
             if len(seen) >= args.target:
                 break
             query = q.format(city=city)
