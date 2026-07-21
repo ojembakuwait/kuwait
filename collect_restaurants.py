@@ -80,6 +80,18 @@ CITIES_AU = [
     "Port Douglas", "Fremantle", "Ballarat", "Bendigo", "Launceston",
     "Townsville", "Margaret River", "Yarra Valley", "Mornington Peninsula",
     "Barossa Valley", "Surfers Paradise", "Manly", "Parramatta", "Cronulla",
+    # Sydney upscale suburbs
+    "Surry Hills", "Potts Point", "Darlinghurst", "Woollahra", "Double Bay",
+    "Barangaroo", "The Rocks", "Chippendale", "Bondi", "Paddington NSW",
+    # Melbourne upscale suburbs
+    "South Yarra", "Fitzroy", "Carlton", "Richmond Victoria", "St Kilda",
+    "Prahran", "Southbank", "Collingwood", "Brighton Victoria",
+    # Brisbane / Perth / Adelaide / Gold Coast suburbs
+    "Fortitude Valley", "South Brisbane", "New Farm", "Northbridge WA",
+    "Cottesloe", "Subiaco", "North Adelaide", "Broadbeach", "Burleigh Heads",
+    # Wine regions & resort towns
+    "Hunter Valley", "McLaren Vale", "Swan Valley", "Daylesford",
+    "Airlie Beach", "Palm Cove", "Noosa", "Coffs Harbour", "Port Macquarie",
 ]
 
 # Query variants per city. Kept lean because the daily API quota is small:
@@ -93,6 +105,8 @@ QUERIES_AU = [
     "fine dining restaurant in {city}, Australia",
     "steakhouse in {city}, Australia",
     "upscale restaurant in {city}, Australia",
+    "degustation restaurant in {city}, Australia",
+    "chef hatted restaurant in {city}, Australia",
 ]
 
 # A CITIES entry is treated as "already covered" (and skipped, to conserve
