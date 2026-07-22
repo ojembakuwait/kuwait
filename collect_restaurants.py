@@ -270,6 +270,10 @@ def main():
     ap.add_argument("--email-workers", type=int, default=12)
     ap.add_argument("--region", choices=sorted(REGIONS), default="us",
                     help="which country's city list/parsing to use")
+    ap.add_argument("--covered-threshold", type=int, default=COVERED_THRESHOLD,
+                    help="skip a city once existing output holds this many "
+                         "rows for it (set to 1 to skip any already-searched "
+                         "city and spend quota only on newly-added cities)")
     args = ap.parse_args()
 
     region = REGIONS[args.region]
@@ -305,7 +309,7 @@ def main():
         r.get("city", "").strip().lower() for r in existing)
     covered_cities = {
         city for city, n in covered_counts.items()
-        if n >= COVERED_THRESHOLD
+        if n >= args.covered_threshold
     }
 
     print(f"== Phase 1: discovering restaurants via Places API "
