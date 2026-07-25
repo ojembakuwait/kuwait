@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDIS — Document Integrity Infrastructure for Nigerian Litigation | Unibind Technologies</title>
+<meta name="description" content="CDIS is tamper evident, court grade document integrity infrastructure for elite Nigerian litigation firms. Sealed chain of custody for physical court documents, from filing to archive. Operated by Unibind Technologies, exclusive Nigerian distributor of Peleman Industries.">
+<meta property="og:title" content="CDIS — Corporate Document Integrity System">
+<meta property="og:description" content="No one can question what you filed. Tamper evident, court grade document integrity infrastructure for Nigeria's elite litigation firms.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="og-image.png">
+<meta name="theme-color" content="#0B1F35">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230B1F35'/%3E%3Cpath d='M14 14h10v4h-6v28h6v4H14zM50 14H40v4h6v28h-6v4h10z' fill='%23C8A734'/%3E%3Crect x='29' y='30' width='6' height='6' fill='%23C8A734'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CDIS — Corporate Document Integrity System
+   Design language: private bank meets law review.
+   ============================================================ */
+:root{
+  --navy:#0B1F35;
+  --navy-deep:#081527;
+  --gold:#C8A734;
+  --gold-soft:#d8bc5c;
+  --gold-dim:rgba(200,167,52,.35);
+  --crimson:#C8191A;
+  --cream:#FDF9EE;
+  --ivory:#F8F3E6;
+  --black:#0a0a0a;
+  --ink:#182635;
+  --ink-soft:#44536a;
+  --paper-line:rgba(11,31,53,.14);
+  --serif:'Fraunces', Georgia, serif;
+  --sans:'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --mono:'IBM Plex Mono', 'Courier New', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--sans);
+  font-weight:300;
+  color:var(--ink);
+  background:var(--cream);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--gold);color:var(--navy);}
+img,svg{max-width:100%;display:block;}
+a{color:inherit;}
+
+/* ---------- shared layout ---------- */
+.wrap{max-width:1160px;margin:0 auto;padding:0 clamp(1.25rem, 4vw, 3rem);}
+.wrap--narrow{max-width:880px;}
+section{position:relative;overflow:hidden;}
+.section-pad{padding:clamp(5rem, 10vw, 8.5rem) 0;}
+
+.eyebrow{
+  font-family:var(--mono);
+  font-size:.72rem;
+  font-weight:500;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  display:flex;align-items:center;gap:1.1rem;
+  margin-bottom:2.2rem;
+}
+.eyebrow::before{content:'';display:block;width:2.6rem;height:1px;background:currentColor;opacity:.6;}
+.eyebrow--gold{color:var(--gold);}
+.eyebrow--navy{color:var(--navy);}
+.eyebrow--crimson{color:var(--crimson);}
+
+h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.14;letter-spacing:-.01em;}
+h2{font-size:clamp(2rem, 4.4vw, 3.15rem);}
+h3{font-size:clamp(1.2rem, 2vw, 1.45rem);}
+.lede{font-size:clamp(1.02rem, 1.5vw, 1.18rem);font-weight:300;max-width:46em;}
+
+.gold-rule{width:100%;height:1px;background:linear-gradient(90deg, var(--gold), rgba(200,167,52,.08));border:0;}
+
+/* dark sections */
+.on-dark{color:#e9e4d6;}
+.on-dark h2, .on-dark h3{color:#f5f0e2;}
+.on-dark .lede{color:rgba(233,228,214,.82);}
+.bg-navy{background:var(--navy);}
+.bg-black{background:var(--black);}
+.bg-cream{background:var(--cream);}
+.bg-ivory{background:var(--ivory);}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-block;
+  font-family:var(--sans);
+  font-weight:500;
+  font-size:.92rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  text-decoration:none;
+  padding:1.05rem 2.2rem;
+  border:1px solid var(--gold);
+  transition:background .25s ease, color .25s ease, border-color .25s ease;
+  cursor:pointer;
+  text-align:center;
+}
+.btn--solid{background:var(--gold);color:var(--navy);}
+.btn--solid:hover{background:var(--gold-soft);border-color:var(--gold-soft);}
+.btn--ghost{background:transparent;color:var(--gold);}
+.btn--ghost:hover{background:rgba(200,167,52,.12);}
+.btn--navy{background:var(--navy);color:var(--cream);border-color:var(--navy);}
+.btn--navy:hover{background:var(--navy-deep);}
+
+/* ---------- header ---------- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  background:rgba(8,21,39,.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(200,167,52,.22);
+}
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  height:4.4rem;
+}
+.brand{display:flex;align-items:baseline;gap:.85rem;text-decoration:none;}
+.brand__mark{
+  font-family:var(--serif);font-weight:500;font-size:1.45rem;letter-spacing:.08em;
+  color:var(--gold);
+}
+.brand__desc{
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(233,228,214,.6);
+}
+.nav__links{display:flex;align-items:center;gap:2.2rem;list-style:none;}
+.nav__links a{
+  font-size:.8rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(233,228,214,.78);text-decoration:none;transition:color .2s ease;
+}
+.nav__links a:hover{color:var(--gold);}
+.nav__cta{
+  font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--navy);background:var(--gold);text-decoration:none;
+  padding:.6rem 1.2rem;border:1px solid var(--gold);
+  transition:background .2s ease;
+}
+.nav__cta:hover{background:var(--gold-soft);}
+@media(max-width:1200px){
+  .brand__desc{display:none;}
+}
+@media(max-width:920px){
+  .nav__links{display:none;}
+}
+
+/* ---------- hero ---------- */
+.hero{
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(200,167,52,.10), transparent 60%),
+    var(--navy);
+  min-height:min(100vh, 60rem);
+  display:flex;align-items:center;
+  padding:8.5rem 0 6rem;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(200,167,52,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,167,52,.05) 1px, transparent 1px);
+  background-size:72px 72px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 30%, #000 30%, transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 30%, #000 30%, transparent 80%);
+}
+.hero__inner{position:relative;max-width:880px;}
+.hero__kicker{
+  font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.34em;
+  text-transform:uppercase;color:var(--gold);
+  display:flex;align-items:center;gap:1.2rem;margin-bottom:2.6rem;
+}
+.hero__kicker::before,.hero__kicker::after{content:'';height:1px;background:var(--gold-dim);flex:0 0 3rem;}
+.hero h1{
+  font-size:clamp(2.7rem, 6.4vw, 4.9rem);
+  font-weight:400;
+  color:#f7f2e4;
+  margin-bottom:2rem;
+}
+.hero h1 em{font-style:italic;color:var(--gold);}
+.hero__sub{
+  font-size:clamp(1.05rem, 1.6vw, 1.25rem);
+  color:rgba(233,228,214,.8);
+  max-width:38em;
+  margin-bottom:3.2rem;
+}
+.hero__ctas{display:flex;flex-wrap:wrap;gap:1.1rem;margin-bottom:4.5rem;}
+.hero__marks{
+  display:flex;flex-wrap:wrap;gap:2.6rem;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(233,228,214,.5);
+  border-top:1px solid rgba(200,167,52,.18);
+  padding-top:1.6rem;
+}
+.hero__marks span b{color:var(--gold);font-weight:500;}
+
+/* ---------- NEPQ interstitial ---------- */
+.interlude{
+  padding:clamp(3.4rem, 6vw, 5rem) 0;
+  text-align:center;
+}
+.interlude p{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(1.25rem, 2.4vw, 1.7rem);
+  line-height:1.5;
+  max-width:34em;margin:0 auto;
+}
+.interlude--dark{background:var(--navy-deep);color:rgba(233,228,214,.9);}
+.interlude--dark em{color:var(--gold);font-style:italic;}
+.interlude--light{background:var(--ivory);color:var(--navy);}
+.interlude--light em{color:var(--crimson);font-style:italic;}
+.interlude .q-mark{
+  display:block;font-family:var(--mono);font-style:normal;font-size:.68rem;
+  letter-spacing:.3em;text-transform:uppercase;opacity:.55;margin-bottom:1.4rem;
+}
+
+/* ---------- case cards ---------- */
+.case-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin:3.4rem 0;}
+@media(max-width:860px){.case-grid{grid-template-columns:1fr;}}
+.case-card{
+  background:#fffdf6;
+  border:1px solid var(--paper-line);
+  border-left:3px solid var(--crimson);
+  padding:2.4rem 2.2rem 2.2rem;
+  box-shadow:0 1px 0 rgba(11,31,53,.05);
+}
+.case-card__cite{
+  font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:.06em;
+  color:var(--crimson);
+  text-transform:uppercase;
+  margin-bottom:.4rem;
+}
+.case-card__court{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:1.4rem;
+  padding-bottom:1.1rem;border-bottom:1px solid var(--paper-line);
+}
+.case-card p{font-size:.98rem;color:var(--ink);}
+.case-card p b{font-weight:600;}
+
+.distinction{
+  margin-top:3rem;
+  border:1px solid var(--paper-line);
+  border-top:2px solid var(--gold);
+  background:#fffdf6;
+  padding:2.6rem clamp(1.6rem, 4vw, 3rem);
+}
+.distinction .label{
+  font-family:var(--mono);font-size:.7rem;font-weight:500;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;
+}
+.distinction p{max-width:52em;}
+.distinction p + p{margin-top:1rem;}
+.distinction b{font-weight:600;color:var(--navy);}
+
+/* ---------- hidden costs ---------- */
+.tax-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin:3.6rem 0 3rem;}
+@media(max-width:860px){.tax-grid{grid-template-columns:1fr;}}
+.tax-card{
+  border:1px solid rgba(200,167,52,.28);
+  padding:2.6rem 2.4rem;
+  background:linear-gradient(180deg, rgba(200,167,52,.05), transparent 45%);
+}
+.tax-card__no{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.3em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:1.6rem;
+}
+.tax-card h3{margin-bottom:1.4rem;color:#f5f0e2;}
+.tax-card p{color:rgba(233,228,214,.78);font-size:.98rem;}
+.tax-card p + p{margin-top:1rem;}
+.tax-card .figure{
+  font-family:var(--serif);
+  font-size:clamp(1.9rem, 3.4vw, 2.6rem);
+  color:var(--gold);
+  display:block;margin:1.6rem 0 .3rem;
+}
+.tax-card .figure-note{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(233,228,214,.5);
+}
+.stat-band{
+  border-top:1px solid rgba(200,167,52,.2);
+  padding-top:2.2rem;
+  display:flex;flex-wrap:wrap;gap:3rem;
+}
+.stat-band .stat{max-width:20rem;}
+.stat-band .stat b{
+  font-family:var(--serif);font-weight:500;font-size:1.9rem;color:var(--gold);display:block;line-height:1.2;margin-bottom:.4rem;
+}
+.stat-band .stat span{font-size:.85rem;color:rgba(233,228,214,.65);line-height:1.55;display:block;}
+.stat-band .stat .src{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(233,228,214,.4);margin-top:.6rem;
+}
+
+/* ---------- tollgate ---------- */
+.tollgate{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2.5rem, 6vw, 5rem);align-items:start;}
+@media(max-width:900px){.tollgate{grid-template-columns:1fr;}}
+.tollgate__facts{list-style:none;margin:2.4rem 0;}
+.tollgate__facts li{
+  display:flex;gap:1.3rem;align-items:flex-start;
+  padding:1.35rem 0;
+  border-bottom:1px solid var(--paper-line);
+  font-size:.98rem;
+}
+.tollgate__facts li:first-child{border-top:1px solid var(--paper-line);}
+.tollgate__facts .tick{
+  font-family:var(--mono);font-size:.72rem;font-weight:600;color:var(--gold);
+  border:1px solid var(--gold-dim);
+  width:1.9rem;height:1.9rem;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:.15rem;
+}
+.pull-line{
+  border-left:2px solid var(--gold);
+  padding:1.8rem 0 1.8rem 2.2rem;
+  font-family:var(--serif);
+  font-size:clamp(1.25rem, 2vw, 1.55rem);
+  font-style:italic;
+  color:var(--navy);
+  line-height:1.5;
+}
+.tollgate__side{
+  background:var(--navy);
+  color:#e9e4d6;
+  padding:2.8rem 2.4rem;
+  position:sticky;top:6.5rem;
+}
+.tollgate__side .label{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.6rem;
+}
+.tollgate__side p{font-size:.94rem;color:rgba(233,228,214,.8);}
+.tollgate__side p + p{margin-top:1rem;}
+.tollgate__side .date{
+  font-family:var(--mono);font-size:.78rem;letter-spacing:.1em;
+  color:var(--gold);display:block;margin-top:1.8rem;padding-top:1.4rem;
+  border-top:1px solid rgba(200,167,52,.25);
+}
+
+/* ---------- system: package / present / preserve ---------- */
+.lifecycle{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(200,167,52,.25);margin-top:3.6rem;border:1px solid rgba(200,167,52,.25);}
+@media(max-width:900px){.lifecycle{grid-template-columns:1fr;}}
+.phase{
+  background:var(--navy);
+  padding:3rem 2.2rem 2.8rem;
+}
+.phase__index{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.3em;color:rgba(233,228,214,.45);
+  text-transform:uppercase;margin-bottom:2.2rem;display:flex;justify-content:space-between;align-items:center;
+}
+.phase__index .roman{color:var(--gold);font-size:.9rem;font-weight:600;}
+.phase h3{
+  font-size:1.6rem;letter-spacing:.1em;text-transform:uppercase;
+  font-family:var(--serif);font-weight:500;color:var(--gold);
+  margin-bottom:1.6rem;
+}
+.phase p{font-size:.95rem;color:rgba(233,228,214,.78);}
+.phase p + p{margin-top:1rem;}
+.phase ul{list-style:none;margin-top:1.6rem;}
+.phase ul li{
+  font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;
+  color:rgba(233,228,214,.65);
+  padding:.55rem 0 .55rem 1.4rem;position:relative;
+  border-top:1px solid rgba(200,167,52,.14);
+}
+.phase ul li::before{content:'—';position:absolute;left:0;color:var(--gold);}
+
+/* ---------- proof ---------- */
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin:3.4rem 0 4rem;}
+@media(max-width:900px){.proof-grid{grid-template-columns:1fr;}}
+.proof-item{
+  border-top:2px solid var(--navy);
+  padding-top:1.8rem;
+}
+.proof-item .figure{
+  font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);color:var(--navy);
+  display:block;line-height:1.15;margin-bottom:.9rem;
+}
+.proof-item p{font-size:.93rem;color:var(--ink-soft);}
+.proof-item .tag{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold);display:block;margin-bottom:1rem;
+}
+
+/* quote with gold corner brackets */
+.grand-quote{
+  position:relative;
+  max-width:760px;margin:0 auto;
+  padding:clamp(2.6rem, 5vw, 3.8rem) clamp(2rem, 5vw, 3.6rem);
+  text-align:center;
+}
+.grand-quote::before,.grand-quote::after,
+.grand-quote .bracket::before,.grand-quote .bracket::after{
+  content:'';position:absolute;width:2.6rem;height:2.6rem;
+  border-color:var(--gold);border-style:solid;
+}
+.grand-quote::before{top:0;left:0;border-width:1px 0 0 1px;}
+.grand-quote::after{top:0;right:0;border-width:1px 1px 0 0;}
+.grand-quote .bracket::before{bottom:0;left:0;border-width:0 0 1px 1px;}
+.grand-quote .bracket::after{bottom:0;right:0;border-width:0 1px 1px 0;}
+.grand-quote blockquote{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(1.35rem, 2.6vw, 1.9rem);
+  line-height:1.45;color:var(--navy);
+  margin-bottom:1.8rem;
+}
+.grand-quote figcaption{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.grand-quote figcaption b{color:var(--gold);font-weight:600;display:block;margin-bottom:.3rem;}
+
+/* ---------- guarantee ---------- */
+.guarantee-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin:3.6rem 0 3rem;}
+@media(max-width:900px){.guarantee-grid{grid-template-columns:1fr;}}
+.guarantee-card{
+  border:1px solid rgba(200,167,52,.3);
+  padding:2.6rem 2.2rem;
+  display:flex;flex-direction:column;
+  background:linear-gradient(180deg, rgba(200,167,52,.04), transparent 40%);
+}
+.guarantee-card .num{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.6rem;
+}
+.guarantee-card h3{color:#f5f0e2;margin-bottom:1.2rem;}
+.guarantee-card p{font-size:.94rem;color:rgba(233,228,214,.75);flex:1;}
+.guarantee-card .consequence{
+  margin-top:2rem;padding-top:1.4rem;
+  border-top:1px solid rgba(200,167,52,.3);
+  font-family:var(--serif);font-weight:600;font-size:1.15rem;color:var(--gold);
+  letter-spacing:.04em;
+}
+.guarantee-close{
+  text-align:center;
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(1.2rem, 2.2vw, 1.55rem);
+  color:rgba(233,228,214,.9);
+  max-width:30em;margin:0 auto;
+}
+.guarantee-close em{color:var(--gold);}
+
+/* ---------- tiers ---------- */
+.tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3.4rem;}
+@media(max-width:940px){.tier-grid{grid-template-columns:1fr;}}
+.tier{
+  background:#fffdf6;
+  border:1px solid var(--paper-line);
+  padding:2.8rem 2.4rem;
+  display:flex;flex-direction:column;
+}
+.tier--flag{border-top:3px solid var(--gold);}
+.tier .tier__tag{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1rem;min-height:1rem;
+}
+.tier h3{color:var(--navy);font-size:1.5rem;margin-bottom:.5rem;}
+.tier .tier__machine{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:1.8rem;padding-bottom:1.4rem;
+  border-bottom:1px solid var(--paper-line);
+}
+.tier p{font-size:.92rem;color:var(--ink-soft);}
+.tier ul{list-style:none;margin-top:1.6rem;flex:1;}
+.tier ul li{
+  font-size:.88rem;color:var(--ink);
+  padding:.6rem 0 .6rem 1.5rem;position:relative;
+  border-top:1px solid var(--paper-line);
+}
+.tier ul li::before{content:'·';position:absolute;left:.3rem;color:var(--gold);font-weight:700;font-size:1.3rem;line-height:1.2;}
+.tier-included{
+  margin-top:3rem;
+  border:1px solid var(--paper-line);
+  background:#fffdf6;
+  padding:2.2rem clamp(1.6rem, 4vw, 3rem);
+  display:flex;flex-wrap:wrap;gap:1.2rem 3rem;align-items:center;
+}
+.tier-included .label{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);
+  flex:0 0 100%;
+}
+.tier-included span{font-size:.88rem;color:var(--ink);display:flex;align-items:center;gap:.6rem;}
+.tier-included span::before{content:'—';color:var(--gold);}
+.tier-cta{text-align:center;margin-top:3rem;}
+.tier-cta p{
+  font-family:var(--mono);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);
+}
+
+/* ---------- assessment ---------- */
+.assessment{
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(200,167,52,.08), transparent 60%),
+    var(--navy);
+}
+.assessment-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2.5rem, 6vw, 5rem);margin-top:3rem;}
+@media(max-width:900px){.assessment-grid{grid-template-columns:1fr;}}
+.breakpoints{list-style:none;counter-reset:bp;}
+.breakpoints li{
+  counter-increment:bp;
+  display:flex;gap:1.4rem;align-items:baseline;
+  padding:1.05rem 0;
+  border-bottom:1px solid rgba(200,167,52,.18);
+  font-size:.94rem;color:rgba(233,228,214,.82);
+}
+.breakpoints li::before{
+  content:counter(bp, decimal-leading-zero);
+  font-family:var(--mono);font-size:.72rem;font-weight:600;color:var(--gold);
+  flex:0 0 1.6rem;
+}
+.assessment__note{
+  margin-top:2rem;font-size:.9rem;color:rgba(233,228,214,.65);
+  border-left:2px solid var(--gold);padding-left:1.4rem;
+}
+.form-shell{
+  background:rgba(8,21,39,.65);
+  border:1px solid rgba(200,167,52,.3);
+  padding:clamp(1.8rem, 4vw, 2.8rem);
+}
+.form-shell .form-label{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.8rem;
+}
+.field{margin-bottom:1.4rem;}
+.field label{
+  display:block;
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(233,228,214,.6);margin-bottom:.5rem;
+}
+.field input,.field select{
+  width:100%;
+  background:rgba(253,249,238,.04);
+  border:1px solid rgba(200,167,52,.3);
+  color:#f5f0e2;
+  font-family:var(--sans);font-size:.95rem;font-weight:300;
+  padding:.85rem 1rem;
+  transition:border-color .2s ease;
+  appearance:none;border-radius:0;
+}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23C8A734'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 1rem center;
+}
+.field select option{color:var(--navy);background:var(--cream);}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold);}
+.field input::placeholder{color:rgba(233,228,214,.3);}
+.form-shell .btn{width:100%;margin-top:.6rem;}
+.form-fineprint{
+  margin-top:1.4rem;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(233,228,214,.4);text-align:center;
+}
+
+/* ---------- legacy ---------- */
+.legacy{
+  text-align:center;
+}
+.legacy .lede{margin:0 auto;}
+.legacy__story{
+  font-family:var(--serif);
+  font-size:clamp(1.25rem, 2.3vw, 1.7rem);
+  line-height:1.6;
+  color:var(--navy);
+  max-width:32em;
+  margin:0 auto 3rem;
+}
+.legacy__story em{font-style:italic;color:var(--crimson);}
+.signature{
+  display:inline-block;
+  border-top:1px solid var(--gold);
+  padding-top:1.6rem;
+}
+.signature .sig-name{
+  font-family:var(--serif);font-size:1.3rem;color:var(--navy);letter-spacing:.02em;
+}
+.signature .sig-role{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ink-soft);margin-top:.5rem;
+}
+
+/* ---------- footer ---------- */
+footer{
+  background:var(--navy);
+  border-top:2px solid var(--gold);
+  color:rgba(233,228,214,.7);
+  padding:4rem 0 2.6rem;
+}
+.footer-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2.5rem;margin-bottom:3rem;}
+.footer-brand .brand__mark{font-size:1.7rem;}
+.footer-brand p{
+  font-size:.85rem;max-width:22rem;margin-top:1rem;color:rgba(233,228,214,.6);
+}
+.footer-col .label{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.2rem;
+}
+.footer-col a,.footer-col span{
+  display:block;font-size:.9rem;color:rgba(233,228,214,.75);
+  text-decoration:none;padding:.3rem 0;transition:color .2s ease;
+}
+.footer-col a:hover{color:var(--gold);}
+.footer-legal{
+  border-top:1px solid rgba(200,167,52,.18);
+  padding-top:1.8rem;
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(233,228,214,.4);
+}
+
+/* ---------- scroll reveal ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.6,.2,1), transform .8s cubic-bezier(.2,.6,.2,1);}
+.reveal.is-visible{opacity:1;transform:none;}
+.reveal-d1{transition-delay:.12s;}
+.reveal-d2{transition-delay:.24s;}
+.reveal-d3{transition-delay:.36s;}
+@media(prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none;}
+  html{scroll-behavior:auto;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <span class="brand__mark">CDIS</span>
+      <span class="brand__desc">Corporate Document Integrity System</span>
+    </a>
+    <ul class="nav__links">
+      <li><a href="#problem">The Risk</a></li>
+      <li><a href="#system">The System</a></li>
+      <li><a href="#proof">Proof</a></li>
+      <li><a href="#guarantee">Guarantee</a></li>
+      <li><a href="#tiers">Tiers</a></li>
+    </ul>
+    <a class="nav__cta" href="#assessment">Book Assessment</a>
+  </div>
+</header>
+
+<!-- 1 · HERO -->
+<section class="hero on-dark" id="top">
+  <div class="wrap">
+    <div class="hero__inner">
+      <p class="hero__kicker reveal">Document Integrity Infrastructure</p>
+      <h1 class="reveal reveal-d1">No One Can Question <em>What You Filed.</em></h1>
+      <p class="hero__sub reveal reveal-d2">CDIS is the physical document integrity infrastructure for Nigeria's elite litigation firms. Tamper evident. Court grade. Sealed in 90 seconds.</p>
+      <div class="hero__ctas reveal reveal-d3">
+        <a class="btn btn--solid" href="#assessment">Book a Free 30 Minute Operational Assessment</a>
+        <a class="btn btn--ghost" href="#system">See the 90 Second Demonstration</a>
+      </div>
+      <div class="hero__marks reveal reveal-d3">
+        <span><b>85</b> Years · Peleman Industries</span>
+        <span><b>120</b> Countries</span>
+        <span><b>Lagos</b> · Abuja · Port Harcourt</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEPQ transition -->
+<div class="interlude interlude--light">
+  <div class="wrap">
+    <p class="reveal"><span class="q-mark">A question for the Managing Partner</span>
+    If opposing counsel alleged a page was substituted inside your filed brief — <em>what is your firm's physical answer?</em></p>
+  </div>
+</div>
+
+<!-- 2 · THE PROBLEM -->
+<section class="bg-cream section-pad" id="problem">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--crimson reveal">This Is Not Theoretical.</p>
+    <h2 class="reveal">Nigerian courts have already ruled on tampered pages.<br>Twice, at the highest levels.</h2>
+    <div class="case-grid">
+      <article class="case-card reveal">
+        <p class="case-card__cite">FRN v. Ugwuowo (2020)</p>
+        <p class="case-card__court">Federal High Court, Abuja</p>
+        <p>A lawyer was <b>criminally charged</b> for physically replacing pages 7, 3, 21, 23, 29 and 32 inside Supreme Court briefs — across four separate cases. The substitution was possible because nothing about the binding made it evident.</p>
+      </article>
+      <article class="case-card reveal reveal-d1">
+        <p class="case-card__cite">RCN Networks v. GTB</p>
+        <p class="case-card__court">CA/L/888/2014 · Decided 18 June 2025</p>
+        <p>An entire <b>₦1 billion judgment was overturned</b> because an execution page was allegedly moved between loan documents. The alteration was detected only through page numbering inconsistencies — the document itself could not testify.</p>
+      </article>
+    </div>
+    <div class="distinction reveal">
+      <p class="label">The Distinction Most Firms Miss</p>
+      <p><b>Akpan v. Bob (2011)</b> protects your brief from legal quality challenges. It is silent on physical integrity challenges.</p>
+      <p>If a page is alleged to have been altered, no case law helps you. No seniority helps you. Only the physical document can answer — and a stapled or coil bound document has no answer to give.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEPQ transition -->
+<div class="interlude interlude--dark on-dark">
+  <div class="wrap">
+    <p class="reveal"><span class="q-mark">A question for the Practice Manager</span>
+    What did your firm pay last month for partners to staple and paginate — <em>and what did the client see when it arrived?</em></p>
+  </div>
+</div>
+
+<!-- 3 · HIDDEN COSTS -->
+<section class="bg-black on-dark section-pad" id="costs">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--gold reveal">The Hidden Costs</p>
+    <h2 class="reveal">Two taxes your firm pays today.<br>Neither appears on any invoice.</h2>
+    <div class="tax-grid">
+      <article class="tax-card reveal">
+        <p class="tax-card__no">Tax No. 01</p>
+        <h3>The Salary Tax</h3>
+        <p>Partners billed at ₦85,000 per hour and associates at ₦15,000 per hour, stapling and paginating court bundles at 11pm before a filing deadline.</p>
+        <p>That is roughly ₦250,000 of professional time consumed per major matter — on work no client would knowingly pay for.</p>
+        <span class="figure">₦30,000,000</span>
+        <p class="figure-note">Estimated annual cost at 10 major matters per month</p>
+      </article>
+      <article class="tax-card reveal reveal-d1">
+        <p class="tax-card__no">Tax No. 02</p>
+        <h3>The Brand Tax</h3>
+        <p>A ₦20 million argument, filed in a ₦2,000 plastic coil. A Tier 1 firm presenting a Tier 3 document.</p>
+        <p>The judge notices before a single word is read. So does the client sitting beside you. The presentation speaks first, and it does not speak in your favour.</p>
+        <span class="figure">Tier 1 firm. Tier 3 document.</span>
+        <p class="figure-note">The gap every opposing counsel can see</p>
+      </article>
+    </div>
+    <div class="stat-band reveal">
+      <div class="stat">
+        <b>30%</b>
+        <span>of revenue lost to manual document handling in professional services organisations.</span>
+        <p class="src">Source · IDC Research</p>
+      </div>
+      <div class="stat">
+        <b>18–40%</b>
+        <span>human error rates in manual document assembly under deadline pressure.</span>
+        <p class="src">Source · IDC Research</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · DIGITAL TOLLGATE PARADOX -->
+<section class="bg-ivory section-pad" id="paradox">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--navy reveal">The Digital Tollgate Paradox</p>
+    <h2 class="reveal">E-filing did not retire the physical document.<br>It promoted it.</h2>
+    <div class="tollgate" style="margin-top:3.2rem;">
+      <div>
+        <p class="lede reveal">Since the Lagos Federal High Court made e-filing mandatory, a paradox has quietly taken hold in every litigation practice:</p>
+        <ul class="tollgate__facts">
+          <li class="reveal"><span class="tick">01</span><span>First service remains strictly physical. The originating processes that open a matter still travel by hand, in paper.</span></li>
+          <li class="reveal"><span class="tick">02</span><span>Every legacy case runs fully manual until final judgment. Years of live matters remain paper matters, end to end.</span></li>
+          <li class="reveal"><span class="tick">03</span><span>E-filing reduced document volume — and concentrated all remaining risk on the highest stakes physical documents that survive it.</span></li>
+        </ul>
+        <div class="pull-line reveal">E-filing handles the digital. CDIS handles the physical documents e-filing cannot touch — and those are the ones that matter most.</div>
+      </div>
+      <aside class="tollgate__side reveal reveal-d1">
+        <p class="label">Regulatory Context</p>
+        <p>The fewer physical documents a firm produces, the more each one carries. The originating summons. The execution page. The certified true copy on which an appeal turns.</p>
+        <p>Volume went down. Stakes per document went up. That is the paradox — and it is precisely where integrity infrastructure belongs.</p>
+        <span class="date">Lagos FHC · Mandatory E-Filing · 27 April 2026</span>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- NEPQ transition -->
+<div class="interlude interlude--dark on-dark">
+  <div class="wrap">
+    <p class="reveal"><span class="q-mark">A question for the Practice Head</span>
+    Between your printer and the court registry, your bundle changes hands six times. <em>At which handoff would you detect interference?</em></p>
+  </div>
+</div>
+
+<!-- 5 · THE SYSTEM -->
+<section class="bg-navy on-dark section-pad" id="system">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--gold reveal">The System</p>
+    <h2 class="reveal">Package · Present · Preserve</h2>
+    <p class="lede reveal" style="margin-top:1.6rem;color:rgba(233,228,214,.75);">One lifecycle, three disciplines. Built on Peleman Industries document technology — 85 years of engineering, deployed in 120 countries — and operationalised for Nigerian litigation as CDIS.</p>
+    <div class="lifecycle">
+      <article class="phase reveal">
+        <p class="phase__index"><span class="roman">I</span><span>Lifecycle Phase</span></p>
+        <h3>Package</h3>
+        <p>Printed pages become a permanently sealed, tamper evident document set. A steel spine and thermal seal close the bundle for good — no punching, no tearing, no reopening without visible destruction.</p>
+        <ul>
+          <li>8 documents sealed simultaneously</li>
+          <li>90 seconds per cycle</li>
+          <li>Steel spine · thermal seal</li>
+          <li>No punching · no tearing</li>
+        </ul>
+      </article>
+      <article class="phase reveal reveal-d1">
+        <p class="phase__index"><span class="roman">II</span><span>Lifecycle Phase</span></p>
+        <h3>Present</h3>
+        <p>Book quality, lay flat, hard cover output carrying the firm's name — identical across every office, every team member, every matter. The document argues before counsel does.</p>
+        <ul>
+          <li>Hard cover · lay flat opening</li>
+          <li>Firm name on every bundle</li>
+          <li>Identical output, every office</li>
+          <li>Bench ready presentation</li>
+        </ul>
+      </article>
+      <article class="phase reveal reveal-d2">
+        <p class="phase__index"><span class="roman">III</span><span>Lifecycle Phase</span></p>
+        <h3>Preserve</h3>
+        <p>Every bundle archived in the exact sealed state in which it was presented, retrievable in under 10 minutes. Under the Evidence Amendment Act 2023, physical documents now carry direct evidentiary value for the full 10 year retention period.</p>
+        <ul>
+          <li>Archived as presented · sealed</li>
+          <li>Retrieval in under 10 minutes</li>
+          <li>Evidence Amendment Act 2023 compliant</li>
+          <li>10 year retention integrity</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · PROOF -->
+<section class="bg-cream section-pad" id="proof">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--navy reveal">Adopted Where Documents Decide Outcomes</p>
+    <h2 class="reveal">Institutions do not experiment with evidence.<br>They standardise it.</h2>
+    <div class="proof-grid">
+      <div class="proof-item reveal">
+        <span class="tag">Judicial Adoption</span>
+        <span class="figure">15,000+</span>
+        <p>Hard cover packets produced annually by a national court in Algeria, where full court staff operate three of these machines as standing judicial infrastructure.</p>
+      </div>
+      <div class="proof-item reveal reveal-d1">
+        <span class="tag">Manufacturing Pedigree</span>
+        <span class="figure">85 yrs · 120 countries</span>
+        <p>Peleman Industries of Belgium has engineered document technology since 1939, and its systems operate across 120 countries today.</p>
+      </div>
+      <div class="proof-item reveal reveal-d2">
+        <span class="tag">Professional Services</span>
+        <span class="figure">Big Four</span>
+        <p>Adopted by a Big Four professional services firm in Nigeria after its leadership judged their previous presentation beneath their standard. Client names are never published.</p>
+      </div>
+    </div>
+    <figure class="grand-quote reveal">
+      <span class="bracket"></span>
+      <blockquote>&ldquo;So there is genuinely no way to interfere with this without it being obvious?&rdquo;</blockquote>
+      <figcaption><b>Practice Manager</b>Leading Lagos litigation firm — after failing to pull a page from a sealed document</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 7 · GUARANTEE -->
+<section class="bg-black on-dark section-pad" id="guarantee">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--gold reveal">The Triple Protection Guarantee</p>
+    <h2 class="reveal">Three guarantees.<br>One consequence, in writing.</h2>
+    <div class="guarantee-grid">
+      <article class="guarantee-card reveal">
+        <p class="num">Guarantee 01</p>
+        <h3>Performance Guarantee</h3>
+        <p>Measurable improvement across Integrity, Prestige and Speed within 12 months, verified through joint reviews at 90 days and at 12 months. If the improvement is not there, the machine did not earn its place.</p>
+        <p class="consequence">Full refund.</p>
+      </article>
+      <article class="guarantee-card reveal reveal-d1">
+        <p class="num">Guarantee 02</p>
+        <h3>Supply Guarantee</h3>
+        <p>A contractual 60 day consumable stock floor, maintained physically at your firm. If a breached floor ever causes operational disruption, the failure is ours by contract.</p>
+        <p class="consequence">Full refund.</p>
+      </article>
+      <article class="guarantee-card reveal reveal-d2">
+        <p class="num">Guarantee 03</p>
+        <h3>18 Month Hardware Warranty</h3>
+        <p>Any fault arising from normal use within 18 months is met with full machine replacement — not repair queues, not negotiation.</p>
+        <p class="consequence">Full refund.</p>
+      </article>
+    </div>
+    <p class="guarantee-close reveal">Your worst case is your money back. <em>A decision with no downside.</em></p>
+  </div>
+</section>
+
+<!-- 8 · TIERS -->
+<section class="bg-ivory section-pad" id="tiers">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--navy reveal">Deployment Tiers</p>
+    <h2 class="reveal">Sized to the practice.<br>Identical in standard.</h2>
+    <div class="tier-grid">
+      <article class="tier tier--flag reveal">
+        <p class="tier__tag">Multi Office Practices</p>
+        <h3>CDIS Elite</h3>
+        <p class="tier__machine">UniBinder 8.2 · Peleman Industries</p>
+        <p>The flagship deployment for firms running litigation across multiple offices and teams at once.</p>
+        <ul>
+          <li>340 sheet capacity per document</li>
+          <li>8 documents sealed per 90 second cycle</li>
+          <li>Built for multi office, multi team throughput</li>
+        </ul>
+      </article>
+      <article class="tier reveal reveal-d1">
+        <p class="tier__tag">Established Practices</p>
+        <h3>CDIS Professional</h3>
+        <p class="tier__machine">UniBinder 120 · Peleman Industries</p>
+        <p>Full CDIS standard for a single office practice with a steady litigation calendar.</p>
+        <ul>
+          <li>Same sealed, tamper evident output</li>
+          <li>Same court grade presentation standard</li>
+          <li>Scaled for single office volume</li>
+        </ul>
+      </article>
+      <article class="tier reveal reveal-d2">
+        <p class="tier__tag">Focused Practices</p>
+        <h3>CDIS Foundation</h3>
+        <p class="tier__machine">UniBinder 60 · Peleman Industries</p>
+        <p>The entry point to the standard for boutique and specialist litigation teams.</p>
+        <ul>
+          <li>Identical integrity and seal standard</li>
+          <li>Compact footprint</li>
+          <li>A clear upgrade path as volume grows</li>
+        </ul>
+      </article>
+    </div>
+    <div class="tier-included reveal">
+      <p class="label">Every Tier Includes</p>
+      <span>Installation</span>
+      <span>Chain of custody training and certification</span>
+      <span>12 month support</span>
+      <span>The full guarantee stack</span>
+    </div>
+    <div class="tier-cta reveal">
+      <p>Pricing is provided within the operational assessment.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEPQ transition -->
+<div class="interlude interlude--light">
+  <div class="wrap">
+    <p class="reveal"><span class="q-mark">A question before you decide</span>
+    If a matter from 2019 were reopened tomorrow, how long would it take your firm to produce the bundle — <em>in the exact state it was filed?</em></p>
+  </div>
+</div>
+
+<!-- 9 · ASSESSMENT -->
+<section class="assessment on-dark section-pad" id="assessment">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--gold reveal">The Operational Assessment</p>
+    <h2 class="reveal">The Assessment Is Free.<br>The Exposure Is Not.</h2>
+    <div class="assessment-grid">
+      <div>
+        <p class="lede reveal" style="color:rgba(233,228,214,.8);">In 30 minutes on site, we map your firm's physical document exposure — including the six chain of custody break points where interference is possible and detection is not:</p>
+        <ol class="breakpoints" style="margin-top:2rem;">
+          <li class="reveal">The dispatch handoff</li>
+          <li class="reveal">The business centre stop</li>
+          <li class="reveal">The registry queue</li>
+          <li class="reveal">Post hearing reassembly</li>
+          <li class="reveal">The archive room</li>
+          <li class="reveal">The remote oath wet ink gap</li>
+        </ol>
+        <p class="assessment__note reveal">We also map document volume, archive retrievability, and your first service protocol. The deliverable is a documented exposure map for your firm — useful regardless of your decision on CDIS.</p>
+      </div>
+      <div class="form-shell reveal reveal-d1">
+        <p class="form-label">Request the Assessment</p>
+        <form name="assessment" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/?submitted=true">
+          <input type="hidden" name="form-name" value="assessment">
+          <p style="display:none;"><label>Do not fill this field: <input name="bot-field"></label></p>
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" required autocomplete="name" placeholder="Your full name">
+          </div>
+          <div class="field">
+            <label for="f-firm">Firm</label>
+            <input id="f-firm" name="firm" type="text" required autocomplete="organization" placeholder="Firm name">
+          </div>
+          <div class="field">
+            <label for="f-role">Role</label>
+            <select id="f-role" name="role" required>
+              <option value="" disabled selected>Select your role</option>
+              <option>Managing Partner</option>
+              <option>Partner</option>
+              <option>SAN</option>
+              <option>Practice Manager</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" required autocomplete="email" placeholder="name@firm.com">
+          </div>
+          <div class="field">
+            <label for="f-phone">Phone</label>
+            <input id="f-phone" name="phone" type="tel" required autocomplete="tel" placeholder="+234">
+          </div>
+          <button class="btn btn--solid" type="submit">Request My Assessment</button>
+          <p class="form-fineprint">30 minutes · On site · No obligation</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · LEGACY -->
+<section class="bg-cream section-pad legacy" id="legacy">
+  <div class="wrap wrap--narrow">
+    <p class="eyebrow eyebrow--navy reveal" style="justify-content:center;">The Legacy</p>
+    <p class="legacy__story reveal">In 2007, Eddy Okeke .N. introduced Peleman document technology to the Nigerian Judicial Institute. In 2026, his son operationalised that standard as CDIS. <em>This is not a startup idea. It is a legacy made into a system.</em></p>
+    <div class="signature reveal reveal-d1">
+      <p class="sig-name">Okeke Kenechukwu .F.</p>
+      <p class="sig-role">CDIS Strategy &amp; Elite Firm Engagement · FCA (ICAN)</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="brand__mark">CDIS</span>
+        <p>Corporate Document Integrity System. Operated by Unibind Technologies Limited, exclusive Nigerian distributor of Peleman Industries, Belgium.</p>
+      </div>
+      <div class="footer-col">
+        <p class="label">Contact</p>
+        <a href="mailto:kenechukwu@unibindtechnologies.org">kenechukwu@unibindtechnologies.org</a>
+        <a href="mailto:info@unibindtechnologies.org">info@unibindtechnologies.org</a>
+        <a href="tel:+2348086622262">+234 808 662 2262</a>
+      </div>
+      <div class="footer-col">
+        <p class="label">Company</p>
+        <span>Unibind Technologies Limited</span>
+        <span>Exclusive Nigerian Distributor, Peleman Industries</span>
+        <a href="https://www.linkedin.com/company/unibind-technologies" rel="noopener" target="_blank">LinkedIn</a>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <span>&copy; 2026 Unibind Technologies Limited</span>
+      <span>Lagos · Nigeria</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){
+    els.forEach(function(el){ el.classList.add('is-visible'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:.14, rootMargin:'0px 0px -40px 0px'});
+  els.forEach(function(el){ io.observe(el); });
+})();
+</script>
+</body>
+</html>
