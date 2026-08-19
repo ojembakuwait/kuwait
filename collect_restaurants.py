@@ -45,6 +45,7 @@ FIELD_MASK = ",".join([
     "places.userRatingCount",
     "places.editorialSummary",
     "places.primaryTypeDisplayName",
+    "places.addressComponents",
     "nextPageToken",
 ])
 
@@ -94,6 +95,100 @@ CITIES_AU = [
     "Airlie Beach", "Palm Cove", "Noosa", "Coffs Harbour", "Port Macquarie",
 ]
 
+# Europe: the top 15 countries by nominal GDP, with their major cities.
+# Ordered by GDP so the largest food markets are searched first — if the
+# daily quota caps a run, the highest-value countries are already done.
+CITIES_EU_BY_COUNTRY = collections.OrderedDict([
+    ("Germany", [
+        "Berlin", "Munich", "Hamburg", "Frankfurt", "Cologne", "Stuttgart",
+        "Dusseldorf", "Leipzig", "Dresden", "Nuremberg", "Hannover",
+        "Bremen", "Essen", "Dortmund", "Mannheim", "Karlsruhe", "Bonn",
+        "Munster", "Wiesbaden", "Freiburg", "Heidelberg", "Baden-Baden",
+    ]),
+    ("United Kingdom", [
+        "London", "Manchester", "Birmingham", "Edinburgh", "Glasgow",
+        "Liverpool", "Leeds", "Bristol", "Oxford", "Cambridge", "Brighton",
+        "Bath", "York", "Newcastle upon Tyne", "Nottingham", "Sheffield",
+        "Cardiff", "Belfast", "Aberdeen", "Chester", "Canterbury",
+    ]),
+    ("France", [
+        "Paris", "Lyon", "Marseille", "Bordeaux", "Nice", "Toulouse",
+        "Nantes", "Strasbourg", "Lille", "Montpellier", "Cannes",
+        "Reims", "Rennes", "Aix-en-Provence", "Dijon", "Avignon",
+        "Biarritz", "Saint-Tropez", "Annecy", "Colmar",
+    ]),
+    ("Italy", [
+        "Rome", "Milan", "Florence", "Naples", "Turin", "Venice", "Bologna",
+        "Verona", "Genoa", "Palermo", "Bari", "Catania", "Parma", "Modena",
+        "Siena", "Perugia", "Rimini", "Como", "Amalfi", "Sorrento",
+    ]),
+    ("Spain", [
+        "Madrid", "Barcelona", "Valencia", "Seville", "Bilbao", "Malaga",
+        "San Sebastian", "Granada", "Zaragoza", "Palma de Mallorca",
+        "Alicante", "Cordoba", "Marbella", "Santiago de Compostela",
+        "Valladolid", "Ibiza", "Tenerife", "Las Palmas",
+    ]),
+    ("Netherlands", [
+        "Amsterdam", "Rotterdam", "The Hague", "Utrecht", "Eindhoven",
+        "Groningen", "Maastricht", "Haarlem", "Leiden", "Delft",
+        "Breda", "Tilburg", "Nijmegen", "Arnhem",
+    ]),
+    ("Switzerland", [
+        "Zurich", "Geneva", "Basel", "Bern", "Lausanne", "Lucerne",
+        "St. Moritz", "Zermatt", "Lugano", "Montreux", "Interlaken",
+        "Winterthur", "St. Gallen",
+    ]),
+    ("Poland", [
+        "Warsaw", "Krakow", "Wroclaw", "Gdansk", "Poznan", "Lodz",
+        "Katowice", "Szczecin", "Lublin", "Bydgoszcz", "Sopot", "Torun",
+    ]),
+    ("Belgium", [
+        "Brussels", "Antwerp", "Ghent", "Bruges", "Liege", "Leuven",
+        "Namur", "Mechelen", "Knokke-Heist", "Ostend",
+    ]),
+    ("Sweden", [
+        "Stockholm", "Gothenburg", "Malmo", "Uppsala", "Lund", "Helsingborg",
+        "Linkoping", "Vasteras", "Orebro", "Umea",
+    ]),
+    ("Ireland", [
+        "Dublin", "Cork", "Galway", "Limerick", "Kilkenny", "Waterford",
+        "Killarney", "Kinsale", "Belfast City Centre",
+    ]),
+    ("Austria", [
+        "Vienna", "Salzburg", "Innsbruck", "Graz", "Linz", "Klagenfurt",
+        "Kitzbuhel", "Bregenz", "Villach",
+    ]),
+    ("Norway", [
+        "Oslo", "Bergen", "Trondheim", "Stavanger", "Tromso",
+        "Kristiansand", "Drammen", "Alesund",
+    ]),
+    ("Denmark", [
+        "Copenhagen", "Aarhus", "Odense", "Aalborg", "Esbjerg",
+        "Roskilde", "Helsingor", "Kolding",
+    ]),
+    ("Romania", [
+        "Bucharest", "Cluj-Napoca", "Timisoara", "Iasi", "Brasov",
+        "Constanta", "Sibiu", "Oradea", "Craiova", "Galati",
+    ]),
+])
+
+CITIES_EU = [f"{city}, {country}"
+             for country, cities in CITIES_EU_BY_COUNTRY.items()
+             for city in cities]
+
+# Europe covers BOTH fine dining and casual restaurants, so the query set is
+# broader than the upscale-only US/AU lists.
+QUERIES_EU = [
+    "fine dining restaurant in {city}",
+    "restaurant in {city}",
+    "bistro in {city}",
+    "trattoria or brasserie in {city}",
+    "popular local restaurant in {city}",
+    "cafe restaurant in {city}",
+    "steakhouse in {city}",
+    "seafood restaurant in {city}",
+]
+
 # Query variants per city. Kept lean because the daily API quota is small:
 # fewer queries per city => more cities covered per quota-day.
 QUERIES_US = [
@@ -123,19 +218,44 @@ AU_CITY_RE = re.compile(
     r",\s*([^,]+?)\s+(?:NSW|VIC|QLD|WA|SA|TAS|ACT|NT)\s*\d{4}")
 
 
-def parse_city_state_us(addr):
+def parse_city_state_us(addr, place=None):
     state = (US_STATE_RE.search(addr or "") or [None, ""])
     state = state.group(1) if hasattr(state, "group") else ""
     m = US_CITY_RE.search(addr or "")
     return (m.group(1).strip() if m else ""), state
 
 
-def parse_city_state_au(addr):
+def parse_city_state_au(addr, place=None):
     addr = addr or ""
     ms = AU_STATE_RE.search(addr)
     state = ms.group(1) if ms else ""
     mc = AU_CITY_RE.search(addr)
     return (mc.group(1).strip() if mc else ""), state
+
+
+def parse_city_country_eu(addr, place=None):
+    """European addresses have no single format, so use the API's structured
+    addressComponents: locality -> city, country -> the 'state' column.
+    Falls back to the formatted address if components are absent."""
+    city = country = ""
+    for comp in (place or {}).get("addressComponents", []) or []:
+        types = comp.get("types", []) or []
+        text = comp.get("longText") or comp.get("shortText") or ""
+        if "country" in types:
+            country = text
+        elif "locality" in types and not city:
+            city = text
+        elif "postal_town" in types and not city:  # common in the UK
+            city = text
+    if not city:
+        for comp in (place or {}).get("addressComponents", []) or []:
+            if "administrative_area_level_2" in (comp.get("types") or []):
+                city = comp.get("longText") or ""
+                break
+    if not country:
+        parts = [p.strip() for p in (addr or "").split(",") if p.strip()]
+        country = parts[-1] if parts else ""
+    return city, country
 
 EMAIL_RE = re.compile(
     r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}"
@@ -194,6 +314,14 @@ REGIONS = {
         "cities": CITIES_AU,
         "queries": QUERIES_AU,
         "parser": parse_city_state_au,
+    },
+    # Europe intentionally has no price filter: the brief covers fine dining
+    # AND casual restaurants, so every price tier is kept.
+    "eu": {
+        "cities": CITIES_EU,
+        "queries": QUERIES_EU,
+        "parser": parse_city_country_eu,
+        "upscale_only": False,
     },
 }
 
@@ -280,6 +408,7 @@ def main():
     cities = region["cities"]
     queries = region["queries"]
     parse_city_state = region["parser"]
+    upscale_only = region.get("upscale_only", True)
 
     api_key = os.environ.get("GOOGLE_PLACES_API_KEY")
     if not api_key:
@@ -328,7 +457,7 @@ def main():
             query = q.format(city=city)
             n_new = 0
             for place in places_text_search(api_key, query, api_session):
-                if place.get("priceLevel") not in UPSCALE_LEVELS:
+                if upscale_only and place.get("priceLevel") not in UPSCALE_LEVELS:
                     continue
                 pid = place.get("id")
                 if not pid or pid in seen:
@@ -337,7 +466,7 @@ def main():
                 name = (place.get("displayName") or {}).get("text", "")
                 if (name.strip().lower(), addr.strip().lower()) in existing_keys:
                     continue  # already collected in a previous run
-                city_p, state_p = parse_city_state(addr)
+                city_p, state_p = parse_city_state(addr, place)
                 seen[pid] = {
                     "name": (place.get("displayName") or {}).get("text", ""),
                     "address": addr,
