@@ -23,6 +23,7 @@ Usage:
 import argparse
 import collections
 import csv
+import json
 import os
 import re
 import sys
@@ -268,8 +269,13 @@ EMAIL_BLOCKLIST = (
 )
 
 
-def places_text_search(api_key, query, session):
-    """Yield place dicts for a text query, following up to 3 pages."""
+def places_text_search(api_key, query, session, status=None):
+    """Yield place dicts for a text query, following up to 3 pages.
+
+    If `status` is a dict, sets status["quota_blocked"] = True when the API
+    refuses the request for quota reasons, so the caller can tell an
+    exhausted city (nothing left to find) apart from one that was never
+    actually searched."""
     base_body = {"textQuery": query, "maxResultCount": 20}
     body = dict(base_body)
     for _page in range(3):
@@ -290,6 +296,8 @@ def places_text_search(api_key, query, session):
         if resp.status_code != 200:
             print(f"    ! HTTP {resp.status_code}: {resp.text[:200]}",
                   file=sys.stderr)
+            if status is not None and resp.status_code in (429, 403):
+                status["quota_blocked"] = True
             return
         data = resp.json()
         for place in data.get("places", []):
@@ -488,6 +496,9 @@ def main():
                     help="skip a city once existing output holds this many "
                          "rows for it (set to 1 to skip any already-searched "
                          "city and spend quota only on newly-added cities)")
+    ap.add_argument("--progress-file", default="",
+                    help="JSON ledger of city entries already searched. "
+                         "Defaults to .progress_<region>.json next to --out.")
     args = ap.parse_args()
 
     region = REGIONS[args.region]
@@ -527,22 +538,54 @@ def main():
         if n >= args.covered_threshold
     }
 
+    # Ledger of city entries already searched, keyed by the exact CITIES
+    # string we query with. This is what actually makes multi-day runs
+    # advance: matching on the city name returned by the API does not work,
+    # because Google localizes it ("Munich" comes back as "Munchen",
+    # "Cologne" as "Koln"), so those cities never looked "covered" and were
+    # re-searched every run, spending the whole daily quota on one country.
+    progress_path = args.progress_file or os.path.join(
+        os.path.dirname(os.path.abspath(args.out)),
+        f".progress_{args.region}.json")
+    searched = set()
+    if os.path.exists(progress_path):
+        try:
+            with open(progress_path, encoding="utf-8") as f:
+                searched = set(json.load(f).get("searched_cities", []))
+            print(f"Progress ledger: {len(searched)} cities already searched.")
+        except (ValueError, OSError):
+            searched = set()
+
+    def save_progress():
+        tmp = progress_path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump({"region": args.region,
+                       "searched_cities": sorted(searched)}, f, indent=1)
+        os.replace(tmp, progress_path)
+
     print(f"== Phase 1: discovering restaurants via Places API "
           f"(region={args.region}) ==")
     for city in cities:
         if len(seen) >= args.target:
             break
+        if city in searched:
+            continue  # already searched in a previous run
         city_name = city.split(",")[0].strip().lower()
         if city_name in covered_cities:
             print(f"  [skip] {city} already covered "
                   f"({covered_counts[city_name]} rows)")
+            searched.add(city)
+            save_progress()
             continue
+        quota_blocked = False
         for q in queries:
             if len(seen) >= args.target:
                 break
             query = q.format(city=city)
             n_new = 0
-            for place in places_text_search(api_key, query, api_session):
+            status = {}
+            for place in places_text_search(api_key, query, api_session,
+                                            status):
                 if upscale_only and place.get("priceLevel") not in UPSCALE_LEVELS:
                     continue
                 pid = place.get("id")
@@ -569,9 +612,22 @@ def main():
                     "source": "Google Places API (New)",
                 }
                 n_new += 1
+            if status.get("quota_blocked"):
+                quota_blocked = True
+                break
             print(f"  [{len(seen):>4}] {query}  (+{n_new})")
 
-    print(f"\nDiscovered {len(seen)} unique upscale restaurants.")
+        if quota_blocked:
+            # Daily quota is gone. Stop instead of spinning through the rest
+            # of the city list collecting thousands of rejections, and leave
+            # this city unmarked so tomorrow's run picks it up properly.
+            print(f"\n  !! daily quota exhausted at: {city}")
+            print("     stopping; the next run resumes from here.")
+            break
+        searched.add(city)
+        save_progress()
+
+    print(f"\nDiscovered {len(seen)} new restaurants this run.")
 
     records = list(seen.values())
 
