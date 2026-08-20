@@ -326,42 +326,128 @@ REGIONS = {
 }
 
 
+# Contact-page paths across the languages of the 15 target countries.
+# Germany/Austria legally require an "Impressum" carrying contact details,
+# and the other markets have their own conventions, so an English-only
+# path list misses most European sites.
+CONTACT_PATHS = (
+    "/contact", "/contact-us", "/contacts", "/about",           # EN
+    "/impressum", "/kontakt", "/imprint",                        # DE / AT / PL / SE / NO / DK
+    "/contatti", "/contattaci",                                  # IT
+    "/contacto", "/contactanos",                                 # ES
+    "/nous-contacter", "/mentions-legales",                      # FR
+    "/over-ons", "/contactgegevens",                             # NL
+    "/kontakt-oss", "/kontakta-oss",                             # NO / SE
+    "/legal", "/info", "/reservations",
+)
+
+# Words that mark a link as pointing at a contact/legal page.
+CONTACT_LINK_WORDS = (
+    "contact", "kontakt", "impressum", "imprint", "contatti",
+    "contacto", "contatto", "mentions", "legal", "about", "over-ons",
+    "info", "anfahrt", "nous-contacter",
+)
+
+
+def _emails_from_html(html):
+    """Return emails on a page, mailto: links first (most reliable)."""
+    out = []
+    for m in re.findall(r'mailto:([^"\'?>\s]+)', html):
+        out.append(m.strip())
+    for m in EMAIL_RE.findall(html):
+        out.append(m.strip())
+    return out
+
+
+def _clean_email(raw):
+    email = (raw.replace("\u200b", "").replace("\ufeff", "")
+             .strip().strip("\\").rstrip(".,;:)('\"<>"))
+    if not EMAIL_RE.fullmatch(email):
+        return ""
+    low = email.lower()
+    if any(bad in low for bad in EMAIL_BLOCKLIST):
+        return ""
+    if low.count("@") != 1:
+        return ""
+    if low.rsplit(".", 1)[-1] in ("png", "jpg", "jpeg", "gif", "svg", "webp"):
+        return ""
+    return email
+
+
+def _pick_best(found, site_host):
+    """Prefer an address on the restaurant's own domain, so we don't pick up
+    the web designer's or a booking platform's address from the footer."""
+    cleaned = [e for e in (_clean_email(f) for f in found) if e]
+    if not cleaned:
+        return ""
+    host = (site_host or "").lower().lstrip("www.")
+    root = host.split(".")[0] if host else ""
+    if root:
+        for e in cleaned:
+            if root in e.split("@", 1)[1].lower():
+                return e
+    return cleaned[0]
+
+
 def scrape_email(website, session):
-    """Return the best publicly-listed email from a website, or ''."""
+    """Return the best publicly-listed email from a website, or ''.
+
+    Looks at the homepage, then follows contact/Impressum links found on it,
+    then falls back to a list of localized contact paths."""
     if not website:
         return ""
     base = website.rstrip("/")
-    candidates = [website]
-    for path in ("/contact", "/contact-us", "/about", "/contact-us/"):
-        candidates.append(base + path)
-    found = []
-    for url in candidates:
+    try:
+        site_host = re.sub(r"^https?://", "", base).split("/")[0]
+    except Exception:
+        site_host = ""
+
+    def fetch(url):
         try:
             r = session.get(url, timeout=8, allow_redirects=True)
         except requests.RequestException:
-            continue
+            return ""
         if r.status_code != 200 or not r.text:
+            return ""
+        return unescape(r.text)
+
+    # 1. Homepage.
+    html = fetch(website)
+    if html:
+        best = _pick_best(_emails_from_html(html), site_host)
+        if best:
+            return best
+
+    # 2. Contact-ish links discovered on the homepage.
+    candidates = []
+    if html:
+        for href in re.findall(r'href=["\']([^"\']+)["\']', html):
+            low = href.lower()
+            if any(w in low for w in CONTACT_LINK_WORDS):
+                if low.startswith("mailto:") or low.startswith("#"):
+                    continue
+                if href.startswith("http"):
+                    if site_host and site_host not in href:
+                        continue  # stay on the restaurant's own domain
+                    candidates.append(href)
+                else:
+                    candidates.append(base + "/" + href.lstrip("/"))
+    # De-duplicate while keeping order, and cap the crawl per site.
+    seen_urls = set()
+    ordered = []
+    for u in candidates + [base + p for p in CONTACT_PATHS]:
+        if u not in seen_urls:
+            seen_urls.add(u)
+            ordered.append(u)
+
+    for url in ordered[:8]:
+        page = fetch(url)
+        if not page:
             continue
-        html = unescape(r.text)
-        # Prefer explicit mailto: links.
-        for m in re.findall(r'mailto:([^"\'?>\s]+)', html):
-            found.append(m.strip())
-        for m in EMAIL_RE.findall(html):
-            found.append(m.strip())
-        if found:
-            break  # first page that yields anything wins
-        time.sleep(0.2)
-    for email in found:
-        email = (email.replace("​", "").replace("﻿", "")
-                 .strip().strip("\\").rstrip(".,;:)('\"<>"))
-        if not EMAIL_RE.fullmatch(email):
-            continue
-        low = email.lower()
-        if any(bad in low for bad in EMAIL_BLOCKLIST):
-            continue
-        if low.count("@") != 1:
-            continue
-        return email
+        best = _pick_best(_emails_from_html(page), site_host)
+        if best:
+            return best
+        time.sleep(0.1)
     return ""
 
 
