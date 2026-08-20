@@ -499,10 +499,21 @@ def main():
     ap.add_argument("--progress-file", default="",
                     help="JSON ledger of city entries already searched. "
                          "Defaults to .progress_<region>.json next to --out.")
+    ap.add_argument("--exclude-country", action="append", default=[],
+                    metavar="NAME",
+                    help="skip every city in this country (repeatable). "
+                         "Matches the country suffix of a CITIES entry.")
     args = ap.parse_args()
 
     region = REGIONS[args.region]
     cities = region["cities"]
+    if args.exclude_country:
+        excluded = {c.strip().lower() for c in args.exclude_country}
+        before = len(cities)
+        cities = [c for c in cities
+                  if c.rsplit(",", 1)[-1].strip().lower() not in excluded]
+        print(f"Excluding {', '.join(args.exclude_country)}: "
+              f"{before - len(cities)} cities dropped, {len(cities)} remain.")
     queries = region["queries"]
     parse_city_state = region["parser"]
     upscale_only = region.get("upscale_only", True)
