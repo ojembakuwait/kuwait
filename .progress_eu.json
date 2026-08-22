@@ -2,10 +2,14 @@
  "region": "eu",
  "searched_cities": [
   "Baden-Baden, Germany",
+  "Bath, United Kingdom",
   "Berlin, Germany",
   "Birmingham, United Kingdom",
   "Bonn, Germany",
   "Bremen, Germany",
+  "Brighton, United Kingdom",
+  "Bristol, United Kingdom",
+  "Cambridge, United Kingdom",
   "Cologne, Germany",
   "Dortmund, Germany",
   "Dresden, Germany",
@@ -19,6 +23,7 @@
   "Hannover, Germany",
   "Heidelberg, Germany",
   "Karlsruhe, Germany",
+  "Leeds, United Kingdom",
   "Leipzig, Germany",
   "Liverpool, United Kingdom",
   "London, United Kingdom",
@@ -26,8 +31,11 @@
   "Mannheim, Germany",
   "Munich, Germany",
   "Munster, Germany",
+  "Newcastle upon Tyne, United Kingdom",
   "Nuremberg, Germany",
+  "Oxford, United Kingdom",
   "Stuttgart, Germany",
-  "Wiesbaden, Germany"
+  "Wiesbaden, Germany",
+  "York, United Kingdom"
  ]
 }
