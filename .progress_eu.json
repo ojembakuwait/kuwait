@@ -1,8 +1,10 @@
 {
  "region": "eu",
  "searched_cities": [
+  "Aberdeen, United Kingdom",
   "Baden-Baden, Germany",
   "Bath, United Kingdom",
+  "Belfast, United Kingdom",
   "Berlin, Germany",
   "Birmingham, United Kingdom",
   "Bonn, Germany",
@@ -10,6 +12,9 @@
   "Brighton, United Kingdom",
   "Bristol, United Kingdom",
   "Cambridge, United Kingdom",
+  "Canterbury, United Kingdom",
+  "Cardiff, United Kingdom",
+  "Chester, United Kingdom",
   "Cologne, Germany",
   "Dortmund, Germany",
   "Dresden, Germany",
@@ -32,8 +37,10 @@
   "Munich, Germany",
   "Munster, Germany",
   "Newcastle upon Tyne, United Kingdom",
+  "Nottingham, United Kingdom",
   "Nuremberg, Germany",
   "Oxford, United Kingdom",
+  "Sheffield, United Kingdom",
   "Stuttgart, Germany",
   "Wiesbaden, Germany",
   "York, United Kingdom"
