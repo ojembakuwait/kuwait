@@ -266,6 +266,16 @@ EMAIL_BLOCKLIST = (
     "sentry", "wixpress", "example.com", "yourdomain", "domain.com",
     "email.com", "@2x", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp",
     "godaddy", "squarespace.com", "cloudflare",
+    # Website-template placeholders that survive on live sites. These are
+    # anchored on "@" so real domains that merely end in the same words are
+    # kept -- "@company.com" must not match "@londonsteakhousecompany.com".
+    "@mysite.com", "@company.com", "@website.com", "@emailaddress.com",
+    "@yoursite", "@your-site", "@sample.com",
+    # Placeholder local parts, including non-English ones: "beispiel" is
+    # German for "example", "nome" Italian for "name".
+    "your@email", "yourmail@", "youremail@", "beispiel@", "esempio@",
+    "ejemplo@", "voorbeeld@", "przyklad@", "nome@email",
+    "noreply@", "no-reply@", "donotreply@",
 )
 
 
