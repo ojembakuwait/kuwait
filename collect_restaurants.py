@@ -112,12 +112,9 @@ CITIES_EU_BY_COUNTRY = collections.OrderedDict([
         "Bath", "York", "Newcastle upon Tyne", "Nottingham", "Sheffield",
         "Cardiff", "Belfast", "Aberdeen", "Chester", "Canterbury",
     ]),
-    ("France", [
-        "Paris", "Lyon", "Marseille", "Bordeaux", "Nice", "Toulouse",
-        "Nantes", "Strasbourg", "Lille", "Montpellier", "Cannes",
-        "Reims", "Rennes", "Aix-en-Provence", "Dijon", "Avignon",
-        "Biarritz", "Saint-Tropez", "Annecy", "Colmar",
-    ]),
+    # France is deliberately absent at the user's instruction. It is removed
+    # from the source list rather than merely filtered out at runtime, so no
+    # forgotten --exclude-country flag can ever put it back.
     ("Italy", [
         "Rome", "Milan", "Florence", "Naples", "Turin", "Venice", "Bologna",
         "Verona", "Genoa", "Palermo", "Bari", "Catania", "Parma", "Modena",
@@ -173,9 +170,114 @@ CITIES_EU_BY_COUNTRY = collections.OrderedDict([
     ]),
 ])
 
-CITIES_EU = [f"{city}, {country}"
-             for country, cities in CITIES_EU_BY_COUNTRY.items()
-             for city in cities]
+# Second wave, searched only after the primary list above is exhausted:
+# additional mid-size cities in the same countries, then the next European
+# economies by GDP after the original fifteen. France stays excluded at the
+# user's instruction and appears nowhere in either list.
+CITIES_EU_EXTRA_BY_COUNTRY = collections.OrderedDict([
+    ("Germany", [
+        "Bochum", "Wuppertal", "Bielefeld", "Augsburg", "Kiel", "Halle",
+        "Magdeburg", "Erfurt", "Rostock", "Mainz", "Saarbrucken", "Lubeck",
+        "Potsdam", "Regensburg", "Wurzburg", "Ulm", "Darmstadt",
+        "Osnabruck", "Braunschweig", "Konstanz",
+    ]),
+    ("United Kingdom", [
+        "Leicester", "Coventry", "Southampton", "Portsmouth", "Reading",
+        "Norwich", "Exeter", "Plymouth", "Derby", "Stoke-on-Trent",
+        "Swansea", "Dundee", "Inverness", "Bournemouth", "Ipswich",
+        "Harrogate", "Windsor", "St Andrews",
+    ]),
+    ("Italy", [
+        "Padua", "Trieste", "Brescia", "Bergamo", "Ferrara", "Ravenna",
+        "Pisa", "Lucca", "Salerno", "Taormina", "Lecce", "Trento",
+        "Bolzano", "Ancona", "Cagliari", "Messina", "Udine", "Vicenza",
+        "Portofino", "Positano",
+    ]),
+    ("Spain", [
+        "Murcia", "Vigo", "Gijon", "A Coruna", "Salamanca", "Toledo",
+        "Segovia", "Pamplona", "Logrono", "Almeria", "Cadiz", "Jerez",
+        "Sitges", "Girona", "Tarragona", "Oviedo", "Santander", "Burgos",
+    ]),
+    ("Netherlands", [
+        "Amersfoort", "Zwolle", "Apeldoorn", "Enschede", "Dordrecht",
+        "Alkmaar", "Hilversum", "Venlo", "Middelburg", "Deventer",
+    ]),
+    ("Switzerland", [
+        "Zug", "Schaffhausen", "Chur", "Vevey", "Sion", "Neuchatel",
+        "Thun", "Biel", "Locarno", "Ascona", "Gstaad", "Davos", "Verbier",
+    ]),
+    ("Poland", [
+        "Gdynia", "Rzeszow", "Bialystok", "Kielce", "Olsztyn", "Zakopane",
+        "Czestochowa", "Gliwice", "Radom", "Opole",
+    ]),
+    ("Belgium", [
+        "Hasselt", "Kortrijk", "Genk", "Sint-Niklaas", "Aalst",
+        "Charleroi", "Mons", "Tournai", "Spa",
+    ]),
+    ("Sweden", [
+        "Norrkoping", "Jonkoping", "Boras", "Karlstad", "Vaxjo",
+        "Sundsvall", "Gavle", "Halmstad", "Visby", "Kalmar",
+    ]),
+    ("Ireland", [
+        "Sligo", "Wexford", "Dundalk", "Drogheda", "Ennis", "Tralee",
+        "Westport", "Dingle", "Athlone",
+    ]),
+    ("Austria", [
+        "Wels", "St. Polten", "Dornbirn", "Steyr", "Baden bei Wien",
+        "Zell am See", "Bad Ischl", "Krems", "Eisenstadt",
+    ]),
+    ("Norway", [
+        "Fredrikstad", "Sandnes", "Bodo", "Molde", "Lillehammer",
+        "Hamar", "Haugesund", "Tonsberg",
+    ]),
+    ("Denmark", [
+        "Randers", "Horsens", "Vejle", "Silkeborg", "Herning",
+        "Naestved", "Skagen", "Ribe",
+    ]),
+    ("Romania", [
+        "Ploiesti", "Braila", "Arad", "Pitesti", "Targu Mures",
+        "Baia Mare", "Buzau", "Satu Mare", "Suceava",
+    ]),
+    # Next European economies by GDP after the original fifteen.
+    ("Czechia", [
+        "Prague", "Brno", "Ostrava", "Plzen", "Olomouc", "Liberec",
+        "Ceske Budejovice", "Hradec Kralove", "Karlovy Vary",
+        "Cesky Krumlov",
+    ]),
+    ("Portugal", [
+        "Lisbon", "Porto", "Faro", "Coimbra", "Braga", "Funchal",
+        "Cascais", "Sintra", "Evora", "Albufeira", "Lagos", "Aveiro",
+    ]),
+    ("Greece", [
+        "Athens", "Thessaloniki", "Patras", "Heraklion", "Rhodes",
+        "Santorini", "Mykonos", "Corfu", "Chania", "Volos",
+    ]),
+    ("Hungary", [
+        "Budapest", "Debrecen", "Szeged", "Pecs", "Gyor", "Miskolc",
+        "Eger", "Sopron", "Balatonfured",
+    ]),
+    ("Finland", [
+        "Helsinki", "Espoo", "Tampere", "Turku", "Oulu", "Vantaa",
+        "Lahti", "Jyvaskyla", "Rovaniemi", "Porvoo",
+    ]),
+])
+
+CITIES_EU = (
+    [f"{city}, {country}"
+     for country, cities in CITIES_EU_BY_COUNTRY.items()
+     for city in cities]
+    + [f"{city}, {country}"
+       for country, cities in CITIES_EU_EXTRA_BY_COUNTRY.items()
+       for city in cities]
+)
+
+# Every country the European list may legitimately return. Post-run cleanup
+# drops rows outside this set, so it must be derived from the city lists
+# rather than hand-maintained -- otherwise adding a country to the search
+# would silently delete its rows again during cleanup.
+EU_TARGET_COUNTRIES = (
+    set(CITIES_EU_BY_COUNTRY) | set(CITIES_EU_EXTRA_BY_COUNTRY)
+) - {"France"}
 
 # Europe covers BOTH fine dining and casual restaurants, so the query set is
 # broader than the upscale-only US/AU lists.
