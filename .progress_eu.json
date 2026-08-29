@@ -9,6 +9,7 @@
   "Bath, United Kingdom",
   "Belfast, United Kingdom",
   "Berlin, Germany",
+  "Bilbao, Spain",
   "Birmingham, United Kingdom",
   "Bologna, Italy",
   "Bonn, Germany",
@@ -32,6 +33,7 @@
   "Freiburg, Germany",
   "Genoa, Italy",
   "Glasgow, United Kingdom",
+  "Granada, Spain",
   "Hamburg, Germany",
   "Hannover, Germany",
   "Heidelberg, Germany",
@@ -41,6 +43,7 @@
   "Liverpool, United Kingdom",
   "London, United Kingdom",
   "Madrid, Spain",
+  "Malaga, Spain",
   "Manchester, United Kingdom",
   "Mannheim, Germany",
   "Milan, Italy",
@@ -53,10 +56,12 @@
   "Nuremberg, Germany",
   "Oxford, United Kingdom",
   "Palermo, Italy",
+  "Palma de Mallorca, Spain",
   "Parma, Italy",
   "Perugia, Italy",
   "Rimini, Italy",
   "Rome, Italy",
+  "San Sebastian, Spain",
   "Seville, Spain",
   "Sheffield, United Kingdom",
   "Siena, Italy",
@@ -67,6 +72,7 @@
   "Venice, Italy",
   "Verona, Italy",
   "Wiesbaden, Germany",
-  "York, United Kingdom"
+  "York, United Kingdom",
+  "Zaragoza, Spain"
  ]
 }
