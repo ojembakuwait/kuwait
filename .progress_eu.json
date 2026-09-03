@@ -50,6 +50,7 @@
   "Hannover, Germany",
   "Heidelberg, Germany",
   "Ibiza, Spain",
+  "Interlaken, Switzerland",
   "Karlsruhe, Germany",
   "Las Palmas, Spain",
   "Lausanne, Switzerland",
@@ -59,6 +60,7 @@
   "Liverpool, United Kingdom",
   "London, United Kingdom",
   "Lucerne, Switzerland",
+  "Lugano, Switzerland",
   "Maastricht, Netherlands",
   "Madrid, Spain",
   "Malaga, Spain",
@@ -67,6 +69,7 @@
   "Marbella, Spain",
   "Milan, Italy",
   "Modena, Italy",
+  "Montreux, Switzerland",
   "Munich, Germany",
   "Munster, Germany",
   "Naples, Italy",
@@ -88,6 +91,7 @@
   "Sheffield, United Kingdom",
   "Siena, Italy",
   "Sorrento, Italy",
+  "St. Moritz, Switzerland",
   "Stuttgart, Germany",
   "Tenerife, Spain",
   "The Hague, Netherlands",
@@ -99,8 +103,10 @@
   "Venice, Italy",
   "Verona, Italy",
   "Wiesbaden, Germany",
+  "Winterthur, Switzerland",
   "York, United Kingdom",
   "Zaragoza, Spain",
+  "Zermatt, Switzerland",
   "Zurich, Switzerland"
  ]
 }
