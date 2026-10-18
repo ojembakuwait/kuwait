@@ -1,0 +1,21 @@
+# Optional PostgreSQL for the Postgres path (SQLite is the default and needs
+# nothing here). Start with: docker compose up -d db
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: portal
+      POSTGRES_PASSWORD: portal
+      POSTGRES_DB: investor_portal
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U portal -d investor_portal']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  pgdata:
