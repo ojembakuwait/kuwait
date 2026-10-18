@@ -1,0 +1,158 @@
+// Cardone Capital Investor Portal — provisional local reconstruction.
+// PostgreSQL datasource (works locally via docker-compose / a local cluster and
+// on serverless hosts like Vercel with a hosted Postgres such as Neon). Money is
+// stored as integer cents to avoid binary floating-point drift.
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  phone        String?
+  tenant       String   @default("cardonecapital")
+  createdAt    DateTime @default(now())
+
+  entities    InvestingEntity[]
+  commitments Commitment[]
+  investments Investment[]
+  sessions    Session[]
+  documents   DocumentAccess[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model InvestingEntity {
+  id         String  @id @default(cuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  type       String // INDIVIDUAL | JOINT | ENTITY | TRUST | IRA
+  taxIdLast4 String?
+
+  commitments Commitment[]
+  investments Investment[]
+
+  @@index([userId])
+}
+
+model Offering {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  name           String
+  status         String // OPEN | COMING_SOON | FULLY_SUBSCRIBED | CLOSED
+  strategy       String
+  assetType      String
+  location       String
+  heroImage      String
+  summary        String
+  description     String
+  minInvestment  Int // cents (per-investor, fits in 32-bit)
+  targetReturn   String
+  targetHold     String
+  totalRaise     BigInt // cents (fund-level aggregate may exceed 32-bit)
+  amountRaised   BigInt // cents
+  closeDate      DateTime?
+  createdAt      DateTime @default(now())
+
+  commitments Commitment[]
+  investments Investment[]
+  documents   Document[]
+}
+
+model Commitment {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  offeringId String
+  offering   Offering @relation(fields: [offeringId], references: [id], onDelete: Cascade)
+  entityId   String
+  entity     InvestingEntity @relation(fields: [entityId], references: [id])
+  amountCents Int
+  // INTEREST (expression of interest) | COMMITTED | FUNDED | WITHDRAWN
+  status     String   @default("INTEREST")
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // one active commitment per user+offering+entity prevents duplicates
+  @@unique([userId, offeringId, entityId])
+  @@index([userId])
+  @@index([offeringId])
+}
+
+model Investment {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  offeringId  String
+  offering    Offering @relation(fields: [offeringId], references: [id])
+  entityId    String
+  entity      InvestingEntity @relation(fields: [entityId], references: [id])
+  committedCents   Int
+  fundedCents      Int @default(0)
+  distributedCents Int @default(0)
+  createdAt   DateTime @default(now())
+
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+model Transaction {
+  id           String   @id @default(cuid())
+  investmentId String
+  investment   Investment @relation(fields: [investmentId], references: [id], onDelete: Cascade)
+  type         String // CONTRIBUTION | DISTRIBUTION | CAPITAL_CALL
+  amountCents  Int
+  date         DateTime
+  memo         String?
+
+  @@index([investmentId])
+}
+
+model Document {
+  id         String   @id @default(cuid())
+  offeringId String?
+  offering   Offering? @relation(fields: [offeringId], references: [id], onDelete: Cascade)
+  title      String
+  category   String // OFFERING | TAX | REPORT | AGREEMENT
+  filename   String // path under storage adapter
+  mimeType   String   @default("application/pdf")
+  sizeBytes  Int      @default(0)
+  // OFFERING docs are visible to any authenticated investor; PRIVATE docs
+  // require an explicit DocumentAccess grant.
+  visibility String   @default("OFFERING") // OFFERING | PRIVATE
+  createdAt  DateTime @default(now())
+
+  access DocumentAccess[]
+}
+
+model DocumentAccess {
+  id         String   @id @default(cuid())
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, userId])
+  @@index([userId])
+}

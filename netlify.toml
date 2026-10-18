@@ -1,4 +1,0 @@
-[build]
-  publish = "dist"
-
-# No build command: the published files are committed as-is.
