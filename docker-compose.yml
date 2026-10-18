@@ -1,5 +1,5 @@
-# Optional PostgreSQL for the Postgres path (SQLite is the default and needs
-# nothing here). Start with: docker compose up -d db
+# PostgreSQL for local development. Start with: docker compose up -d db
+
 services:
   db:
     image: postgres:16-alpine

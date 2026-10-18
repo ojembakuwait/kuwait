@@ -1,15 +1,15 @@
 // Cardone Capital Investor Portal — provisional local reconstruction.
-// Default datasource is SQLite for a zero-dependency local run. To use
-// PostgreSQL instead, set provider = "postgresql" and point DATABASE_URL at
-// the docker-compose Postgres (see .env.example / README). Money is stored as
-// integer cents to avoid binary floating-point drift.
+// PostgreSQL datasource (works locally via docker-compose / a local cluster and
+// on serverless hosts like Vercel with a hosted Postgres such as Neon). Money is
+// stored as integer cents to avoid binary floating-point drift.
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

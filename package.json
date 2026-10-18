@@ -10,11 +10,13 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma db push --force-reset && tsx prisma/seed.ts",
+    "db:reset": "prisma migrate reset --force",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
-    "setup": "prisma generate && prisma db push && tsx prisma/seed.ts"
+    "setup": "prisma generate && prisma migrate deploy && tsx prisma/seed.ts",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

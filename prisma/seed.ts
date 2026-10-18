@@ -1,15 +1,7 @@
-import path from 'path';
-import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { makePdf } from '../lib/pdf';
 
 const prisma = new PrismaClient();
-
-const STORAGE = process.env.STORAGE_DIR
-  ? path.resolve(process.env.STORAGE_DIR)
-  : path.join(process.cwd(), 'storage');
-const PUBLIC_OFFERINGS = path.join(process.cwd(), 'public', 'assets', 'offerings');
 
 const DEMO_PASSWORD = 'Demo!2345';
 
@@ -92,26 +84,10 @@ const OFFERINGS = [
   },
 ] as const;
 
-function heroSvg(hue: string): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="${hue}"/><stop offset="1" stop-color="#13294b"/>
-  </linearGradient></defs>
-  <rect width="800" height="400" fill="url(#g)"/>
-  <g fill="#ffffff" opacity="0.08">
-    <rect x="60" y="180" width="120" height="180"/><rect x="200" y="120" width="120" height="240"/>
-    <rect x="340" y="200" width="120" height="160"/><rect x="480" y="90" width="120" height="270"/>
-    <rect x="620" y="160" width="120" height="200"/>
-  </g>
-</svg>`;
-}
-
-function writeDoc(key: string, title: string, lines: string[]): number {
-  const full = path.join(STORAGE, key);
-  fs.mkdirSync(path.dirname(full), { recursive: true });
-  const buf = makePdf(title, lines);
-  fs.writeFileSync(full, buf);
-  return buf.length;
+// Hero art is a stored CSS gradient (no image files) so the app needs no
+// persistent filesystem and deploys to serverless hosts cleanly.
+function heroGradient(hue: string): string {
+  return `linear-gradient(135deg, ${hue}, #13294b)`;
 }
 
 async function main() {
@@ -126,12 +102,9 @@ async function main() {
   await prisma.offering.deleteMany();
   await prisma.user.deleteMany();
 
-  fs.mkdirSync(PUBLIC_OFFERINGS, { recursive: true });
-
-  // Offerings + hero art + offering documents
+  // Offerings + offering documents
   const offeringRecords: Record<string, { id: string; name: string }> = {};
   for (const o of OFFERINGS) {
-    fs.writeFileSync(path.join(PUBLIC_OFFERINGS, `${o.slug}.svg`), heroSvg(o.hue));
     const rec = await prisma.offering.create({
       data: {
         slug: o.slug,
@@ -140,7 +113,7 @@ async function main() {
         strategy: o.strategy,
         assetType: o.assetType,
         location: o.location,
-        heroImage: `/assets/offerings/${o.slug}.svg`,
+        heroImage: heroGradient(o.hue),
         summary: o.summary,
         description: `${o.name} is a synthetic demonstration offering located in ${o.location}. Strategy: ${o.strategy}. This provisional reconstruction uses fabricated figures to exercise the investor workflow; it does not represent a real Cardone Capital offering.\n\nBusiness plan highlights (synthetic):\n• Target net return of ${o.targetReturn} over a ${o.targetHold} hold.\n• Minimum investment of $${(o.minInvestment / 100).toLocaleString('en-US')}.\n• Professional third-party property management and quarterly investor reporting.`,
         minInvestment: o.minInvestment,
@@ -157,22 +130,14 @@ async function main() {
       ['Offering Memorandum', 'OFFERING'],
       ['Operating Agreement', 'AGREEMENT'],
     ] as const) {
-      const key = `documents/offerings/${o.slug}/${title.replace(/\s+/g, '-').toLowerCase()}.pdf`;
-      const size = writeDoc(key, `${o.name} — ${title}`, [
-        'SYNTHETIC DEMO DOCUMENT — NOT A REAL OFFERING DOCUMENT.',
-        `Offering: ${o.name}`,
-        `Location: ${o.location}`,
-        `Strategy: ${o.strategy}`,
-        `Target return: ${o.targetReturn}`,
-        'This file was generated for local demonstration only.',
-      ]);
       await prisma.document.create({
         data: {
           offeringId: rec.id,
           title: `${o.name} — ${title}`,
           category,
-          filename: key,
-          sizeBytes: size,
+          // PDFs are generated on the fly at download time (see documents route).
+          filename: `${o.slug}/${title.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+          sizeBytes: 24000,
           visibility: 'OFFERING',
         },
       });
@@ -243,19 +208,18 @@ async function main() {
   });
 
   // Private documents for investor 1 only (tax form + report)
-  for (const [title, category, body] of [
-    ['2023 Schedule K-1 — Rivera Family Trust', 'TAX', 'Synthetic K-1 for Lakeside Garden Apartments.'],
-    ['Q4 2023 Investor Report', 'REPORT', 'Synthetic quarterly portfolio report.'],
+  for (const [title, category] of [
+    ['2023 Schedule K-1 — Rivera Family Trust', 'TAX'],
+    ['Q4 2023 Investor Report', 'REPORT'],
   ] as const) {
-    const key = `documents/private/${inv1.id}/${title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.pdf`;
-    const size = writeDoc(key, title, [
-      'SYNTHETIC DEMO DOCUMENT — PRIVATE TO THIS INVESTOR.',
-      body,
-      `Investor: ${inv1.firstName} ${inv1.lastName}`,
-      'Generated for local demonstration only.',
-    ]);
     const doc = await prisma.document.create({
-      data: { title, category, filename: key, sizeBytes: size, visibility: 'PRIVATE' },
+      data: {
+        title,
+        category,
+        filename: `private/${title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.pdf`,
+        sizeBytes: 18000,
+        visibility: 'PRIVATE',
+      },
     });
     await prisma.documentAccess.create({ data: { documentId: doc.id, userId: inv1.id } });
   }

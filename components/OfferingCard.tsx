@@ -28,9 +28,7 @@ export function OfferingCard({ o }: { o: OfferingCardData }) {
       <div
         className="relative h-44 w-full bg-brand-navy"
         style={{
-          backgroundImage: `linear-gradient(135deg, rgba(19,41,75,0.82), rgba(19,41,75,0.35)), url(${o.heroImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundImage: `linear-gradient(135deg, rgba(0,0,0,0.12), rgba(0,0,0,0.30)), ${o.heroImage}`,
         }}
       >
         <div className="absolute left-3 top-3 flex gap-2">

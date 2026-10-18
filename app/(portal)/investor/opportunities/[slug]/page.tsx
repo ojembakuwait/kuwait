@@ -50,9 +50,7 @@ export default async function OfferingDetailPage({ params }: { params: { slug: s
       <div
         className="mt-3 flex min-h-[220px] flex-col justify-end rounded-lg p-6 text-white"
         style={{
-          backgroundImage: `linear-gradient(135deg, rgba(19,41,75,0.85), rgba(19,41,75,0.45)), url(${offering.heroImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundImage: `linear-gradient(135deg, rgba(0,0,0,0.15), rgba(0,0,0,0.35)), ${offering.heroImage}`,
         }}
       >
         <div className="mb-2 flex gap-2">

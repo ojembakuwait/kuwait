@@ -19,7 +19,7 @@ async function requestReset(formData: FormData): Promise<void> {
     await email.send({
       to: user.email,
       subject: 'Reset your Investor Portal password',
-      body: `Use this link within 30 minutes to reset your password:\n${base}/reset-password?token=${token}\n\n(Development inbox — this message was written to storage/mail, not emailed.)`,
+      body: `Use this link within 30 minutes to reset your password:\n${base}/reset-password?token=${token}\n\n(Development: the link is written to the local mail folder and the server log — no real email is sent.)`,
     });
   }
   // Always neutral — never disclose whether an account exists.
@@ -44,7 +44,7 @@ export default function ForgotPasswordPage({
           {sent ? (
             <p className="mt-6 text-sm text-muted" role="status">
               If an account exists for that address, a reset link has been written to the local
-              development inbox (<code>storage/mail</code>). Check it to continue.
+              development mail log (locally, <code>storage/mail</code>; on a server, the deployment logs). Check it to continue.
             </p>
           ) : (
             <form action={requestReset} className="mt-6">

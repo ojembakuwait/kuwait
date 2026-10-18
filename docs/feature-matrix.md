@@ -30,7 +30,7 @@ blocked (needs access/integration).
 | 22 | Decimal-safe money | Spec | `lib/money.ts` (integer cents) | No float drift; BigInt for fund aggregates | **V** — `tests/money.test.ts` (7 tests) |
 | 23 | CSRF + same-origin | Spec | `middleware.ts`, `verifyCsrf`, `sameOrigin` | Token + origin check on mutations | **V** — verify.js "DELETE without csrf 403" |
 | 24 | Local email adapter | Spec | `lib/email.ts` | Dev inbox under `storage/mail`; no provider creds | **V** (writes file) |
-| 25 | File storage adapter | Spec | `lib/storage.ts` | Local disk, path-traversal safe; S3-swappable | **V** (download works) |
+| 25 | Documents without persistent FS | Spec | `app/api/documents/[id]/route.ts`, `lib/pdf.ts` | Synthetic PDFs generated on the fly (serverless-safe) | **V** (download works) |
 | 26 | Keyboard / a11y | Spec | global focus styles, semantic controls, `aria-*` | Visible focus, labels, menu roles | **P** (manual) |
 | 27 | Not-found / refresh / history | Spec | `app/not-found.tsx`, app router | Direct nav + refresh work; 404 page | **V** — build routes + 404 |
 | --- | --- | --- | --- | --- | --- |
